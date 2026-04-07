@@ -63,18 +63,23 @@ def classify_client(client_name: str) -> str:
     return "other"
 
 
+def empty_buckets():
+    return {
+        "claude": {"tokens": 0, "cost": 0.0, "msgs": 0},
+        "codex":  {"tokens": 0, "cost": 0.0, "msgs": 0},
+        "other":  {"tokens": 0, "cost": 0.0, "msgs": 0},
+    }
+
+
 def build(tokscale):
     contribs = tokscale.get("contributions", [])
     summary = tokscale.get("summary", {})
 
-    # ─ Per-day rows
-    daily_rows = []
+    # ─ Per-day rows, keyed by date for sparse lookup
+    by_date: dict[str, dict] = {}
     for c in sorted(contribs, key=lambda x: x["date"]):
         d = c["date"]
-        totals = c.get("totals", {})
-        buckets = {"claude": {"tokens": 0, "cost": 0.0, "msgs": 0},
-                   "codex":  {"tokens": 0, "cost": 0.0, "msgs": 0},
-                   "other":  {"tokens": 0, "cost": 0.0, "msgs": 0}}
+        buckets = empty_buckets()
         for cl in c.get("clients", []):
             bucket = classify_client(cl.get("client", ""))
             tok = cl.get("tokens", {})
@@ -90,7 +95,21 @@ def build(tokscale):
             buckets[bucket]["msgs"] += cl.get("messages", 0)
         for k in buckets:
             buckets[k]["cost"] = round(buckets[k]["cost"], 2)
-        daily_rows.append({"date": d, **buckets})
+        by_date[d] = buckets
+
+    # ─ Fill gaps: emit one row per day from earliest to latest so the
+    # chart x-axis is linear in time (no visually stacked month labels)
+    if not by_date:
+        return None
+    all_iso = sorted(by_date.keys())
+    start_d = date.fromisoformat(all_iso[0])
+    end_d = date.fromisoformat(all_iso[-1])
+    daily_rows = []
+    cur = start_d
+    while cur <= end_d:
+        iso = cur.isoformat()
+        daily_rows.append({"date": iso, **(by_date.get(iso) or empty_buckets())})
+        cur += timedelta(days=1)
 
     # ─ Window summaries
     def window_sum(rows, start: date, end: date):
