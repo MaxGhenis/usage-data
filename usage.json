@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T02:14:55.528879+00:00",
+  "generatedAt": "2026-04-10T02:45:43.973972+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-04-09"
@@ -2990,15 +2990,15 @@
     {
       "date": "2026-04-09",
       "claude": {
-        "tokens": 75767285,
-        "cost": 146.78,
-        "msgs": 661,
+        "tokens": 84461256,
+        "cost": 168.19,
+        "msgs": 722,
         "prompts": 69
       },
       "codex": {
-        "tokens": 8897580740,
-        "cost": 4082.45,
-        "msgs": 60858,
+        "tokens": 9503950902,
+        "cost": 4326.31,
+        "msgs": 65147,
         "prompts": 416
       },
       "other": {
@@ -3012,15 +3012,15 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 736028549,
-        "cost": 1669.64,
-        "msgs": 4509,
+        "tokens": 744722520,
+        "cost": 1691.05,
+        "msgs": 4570,
         "prompts": 853
       },
       "codex": {
-        "tokens": 61184493075,
-        "cost": 27973.47,
-        "msgs": 398336,
+        "tokens": 61790863237,
+        "cost": 28217.33,
+        "msgs": 402625,
         "prompts": 2160
       },
       "other": {
@@ -3030,23 +3030,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 61920521624,
-        "cost": 29643.11,
-        "msgs": 402845,
+        "tokens": 62535585757,
+        "cost": 29908.38,
+        "msgs": 407195,
         "prompts": 3013
       }
     },
     "month": {
       "claude": {
-        "tokens": 3553943065,
-        "cost": 7872.75,
-        "msgs": 26718,
+        "tokens": 3562637036,
+        "cost": 7894.16,
+        "msgs": 26779,
         "prompts": 4743
       },
       "codex": {
-        "tokens": 91900005038,
-        "cost": 42323.97,
-        "msgs": 604774,
+        "tokens": 92506375200,
+        "cost": 42567.83,
+        "msgs": 609063,
         "prompts": 6348
       },
       "other": {
@@ -3056,23 +3056,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 95453948103,
-        "cost": 50196.72,
-        "msgs": 631492,
+        "tokens": 96069012236,
+        "cost": 50461.99,
+        "msgs": 635842,
         "prompts": 11091
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 8638040199,
-        "cost": 17490.44,
-        "msgs": 99439,
+        "tokens": 8646734170,
+        "cost": 17511.85,
+        "msgs": 99500,
         "prompts": 19102
       },
       "codex": {
-        "tokens": 91900361026,
-        "cost": 42324.13,
-        "msgs": 604794,
+        "tokens": 92506731188,
+        "cost": 42567.99,
+        "msgs": 609083,
         "prompts": 6358
       },
       "other": {
@@ -3082,9 +3082,9 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 101290125949,
-        "cost": 60602.85,
-        "msgs": 706858,
+        "tokens": 101905190082,
+        "cost": 60868.12,
+        "msgs": 711208,
         "prompts": 25460
       }
     }
@@ -3093,16 +3093,16 @@
     {
       "client": "codex",
       "model": "gpt-5.4",
-      "tokens": 91835789106,
-      "cost": 42310.12,
-      "share": 0.6982
+      "tokens": 92441926049,
+      "cost": 42553.84,
+      "share": 0.6991
     },
     {
       "client": "claude",
       "model": "claude-opus-4-6",
-      "tokens": 6942538421,
-      "cost": 15998.63,
-      "share": 0.264
+      "tokens": 6951232392,
+      "cost": 16020.04,
+      "share": 0.2632
     },
     {
       "client": "claude",
@@ -3123,14 +3123,14 @@
       "model": "claude-opus-4-5",
       "tokens": 136740148,
       "cost": 246.44,
-      "share": 0.0041
+      "share": 0.004
     },
     {
       "client": "claude",
       "model": "claude-haiku-4-5",
       "tokens": 913783208,
       "cost": 173.24,
-      "share": 0.0029
+      "share": 0.0028
     },
     {
       "client": "claude",
@@ -3149,8 +3149,8 @@
     {
       "client": "codex",
       "model": "gpt-5.4-mini",
-      "tokens": 56549599,
-      "cost": 10.99,
+      "tokens": 56782818,
+      "cost": 11.12,
       "share": 0.0002
     },
     {
