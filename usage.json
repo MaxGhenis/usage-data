@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T03:17:06.538000+00:00",
+  "generatedAt": "2026-04-10T03:48:06.085235+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-04-09"
@@ -2990,15 +2990,15 @@
     {
       "date": "2026-04-09",
       "claude": {
-        "tokens": 103255550,
-        "cost": 205.59,
-        "msgs": 810,
+        "tokens": 113269506,
+        "cost": 221.41,
+        "msgs": 848,
         "prompts": 69
       },
       "codex": {
-        "tokens": 15075386048,
-        "cost": 6795.34,
-        "msgs": 101191,
+        "tokens": 18707533740,
+        "cost": 8459.53,
+        "msgs": 124672,
         "prompts": 416
       },
       "other": {
@@ -3012,15 +3012,15 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 763516814,
-        "cost": 1728.45,
-        "msgs": 4658,
+        "tokens": 773530770,
+        "cost": 1744.27,
+        "msgs": 4696,
         "prompts": 853
       },
       "codex": {
-        "tokens": 67362298383,
-        "cost": 30686.36,
-        "msgs": 438669,
+        "tokens": 70994446075,
+        "cost": 32350.55,
+        "msgs": 462150,
         "prompts": 2160
       },
       "other": {
@@ -3030,23 +3030,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 68125815197,
-        "cost": 32414.81,
-        "msgs": 443327,
+        "tokens": 71767976845,
+        "cost": 34094.82,
+        "msgs": 466846,
         "prompts": 3013
       }
     },
     "month": {
       "claude": {
-        "tokens": 3581431330,
-        "cost": 7931.56,
-        "msgs": 26867,
+        "tokens": 3591445286,
+        "cost": 7947.38,
+        "msgs": 26905,
         "prompts": 4743
       },
       "codex": {
-        "tokens": 98077810346,
-        "cost": 45036.86,
-        "msgs": 645107,
+        "tokens": 101709958038,
+        "cost": 46701.05,
+        "msgs": 668588,
         "prompts": 6348
       },
       "other": {
@@ -3056,23 +3056,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 101659241676,
-        "cost": 52968.42,
-        "msgs": 671974,
+        "tokens": 105301403324,
+        "cost": 54648.43,
+        "msgs": 695493,
         "prompts": 11091
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 8665528464,
-        "cost": 17549.25,
-        "msgs": 99588,
+        "tokens": 8675542420,
+        "cost": 17565.07,
+        "msgs": 99626,
         "prompts": 19102
       },
       "codex": {
-        "tokens": 98078166334,
-        "cost": 45037.02,
-        "msgs": 645127,
+        "tokens": 101710314026,
+        "cost": 46701.21,
+        "msgs": 668608,
         "prompts": 6358
       },
       "other": {
@@ -3082,9 +3082,9 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 107495419522,
-        "cost": 63374.55,
-        "msgs": 747340,
+        "tokens": 111137581170,
+        "cost": 65054.56,
+        "msgs": 770859,
         "prompts": 25460
       }
     }
@@ -3093,37 +3093,37 @@
     {
       "client": "codex",
       "model": "gpt-5.4",
-      "tokens": 98012705827,
-      "cost": 45022.6,
-      "share": 0.7104
+      "tokens": 101644853519,
+      "cost": 46686.79,
+      "share": 0.7177
     },
     {
       "client": "claude",
       "model": "claude-opus-4-6",
-      "tokens": 6970026686,
-      "cost": 16057.43,
-      "share": 0.2534
+      "tokens": 6980040642,
+      "cost": 16073.26,
+      "share": 0.2471
     },
     {
       "client": "claude",
       "model": "claude-opus-4-5",
       "tokens": 535680411,
       "cost": 1178.03,
-      "share": 0.0186
+      "share": 0.0181
     },
     {
       "client": "other",
       "model": "gemini-3-pro-preview",
       "tokens": 500170619,
       "cost": 522.18,
-      "share": 0.0082
+      "share": 0.008
     },
     {
       "client": "other",
       "model": "claude-opus-4-5",
       "tokens": 136740148,
       "cost": 246.44,
-      "share": 0.0039
+      "share": 0.0038
     },
     {
       "client": "claude",
@@ -3137,7 +3137,7 @@
       "model": "claude-sonnet-4-6",
       "tokens": 238379734,
       "cost": 130.03,
-      "share": 0.0021
+      "share": 0.002
     },
     {
       "client": "other",
