@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-29T22:48:06.458405+00:00",
+  "generatedAt": "2026-04-29T23:19:10.164875+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-04-29"
@@ -2780,10 +2780,10 @@
     {
       "date": "2026-03-30",
       "claude": {
-        "tokens": 1540412,
-        "cost": 6.77,
-        "msgs": 18,
-        "prompts": 3
+        "tokens": 307457,
+        "cost": 2.1,
+        "msgs": 5,
+        "prompts": 2
       },
       "codex": {
         "tokens": 1520964790,
@@ -3410,15 +3410,15 @@
     {
       "date": "2026-04-29",
       "claude": {
-        "tokens": 6961815,
-        "cost": 9.26,
-        "msgs": 80,
-        "prompts": 46
+        "tokens": 8583822,
+        "cost": 11.09,
+        "msgs": 95,
+        "prompts": 47
       },
       "codex": {
-        "tokens": 801928009,
-        "cost": 602.76,
-        "msgs": 5955,
+        "tokens": 805029037,
+        "cost": 604.63,
+        "msgs": 5973,
         "prompts": 368
       },
       "other": {
@@ -3432,15 +3432,15 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 254010298,
-        "cost": 239.33,
-        "msgs": 1179,
-        "prompts": 266
+        "tokens": 255632305,
+        "cost": 241.16,
+        "msgs": 1194,
+        "prompts": 267
       },
       "codex": {
-        "tokens": 17150920716,
-        "cost": 5936.1,
-        "msgs": 117090,
+        "tokens": 17154021744,
+        "cost": 5937.97,
+        "msgs": 117108,
         "prompts": 1937
       },
       "other": {
@@ -3450,23 +3450,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 17404931014,
-        "cost": 6175.43,
-        "msgs": 118269,
-        "prompts": 2203
+        "tokens": 17409654049,
+        "cost": 6179.13,
+        "msgs": 118302,
+        "prompts": 2204
       }
     },
     "month": {
       "claude": {
-        "tokens": 13724583701,
-        "cost": 12774.29,
-        "msgs": 52431,
-        "prompts": 5714
+        "tokens": 13726205708,
+        "cost": 12776.12,
+        "msgs": 52446,
+        "prompts": 5715
       },
       "codex": {
-        "tokens": 218033041487,
-        "cost": 94508.44,
-        "msgs": 1434379,
+        "tokens": 218036142515,
+        "cost": 94510.31,
+        "msgs": 1434397,
         "prompts": 7412
       },
       "other": {
@@ -3476,23 +3476,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 231757625188,
-        "cost": 107282.73,
-        "msgs": 1486810,
-        "prompts": 13126
+        "tokens": 231762348223,
+        "cost": 107286.43,
+        "msgs": 1486843,
+        "prompts": 13127
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 19049574596,
-        "cost": 22960.51,
-        "msgs": 128636,
+        "tokens": 19049963648,
+        "cost": 22957.67,
+        "msgs": 128638,
         "prompts": 22423
       },
       "codex": {
-        "tokens": 240088196685,
-        "cost": 104960.77,
-        "msgs": 1584679,
+        "tokens": 240091297713,
+        "cost": 104962.64,
+        "msgs": 1584697,
         "prompts": 10719
       },
       "other": {
@@ -3502,9 +3502,9 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 259528887187,
-        "cost": 128090.71,
-        "msgs": 1715124,
+        "tokens": 259532377267,
+        "cost": 128089.74,
+        "msgs": 1715144,
         "prompts": 33142
       }
     }
@@ -3520,22 +3520,22 @@
     {
       "client": "claude",
       "model": "claude-opus-4-6",
-      "tokens": 5642016493,
-      "cost": 13317.56,
-      "share": 0.104
+      "tokens": 5640783538,
+      "cost": 13312.89,
+      "share": 0.1039
     },
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 11699556411,
-      "cost": 8181.63,
+      "tokens": 11701178418,
+      "cost": 8183.46,
       "share": 0.0639
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 5527945890,
-      "cost": 4356.17,
+      "tokens": 5531046918,
+      "cost": 4358.03,
       "share": 0.034
     },
     {
