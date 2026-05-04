@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-04T16:19:27.098115+00:00",
+  "generatedAt": "2026-05-04T16:52:45.980452+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-04"
@@ -3515,16 +3515,16 @@
     {
       "date": "2026-05-04",
       "claude": {
-        "tokens": 287278945,
-        "cost": 181.3,
-        "msgs": 688,
-        "prompts": 90
+        "tokens": 296720356,
+        "cost": 194.96,
+        "msgs": 722,
+        "prompts": 96
       },
       "codex": {
-        "tokens": 678532932,
-        "cost": 453.66,
-        "msgs": 5070,
-        "prompts": 155
+        "tokens": 728011758,
+        "cost": 490.2,
+        "msgs": 5390,
+        "prompts": 176
       },
       "other": {
         "tokens": 0,
@@ -3537,16 +3537,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 1180291334,
-        "cost": 849.06,
-        "msgs": 3931,
-        "prompts": 373
+        "tokens": 1189732745,
+        "cost": 862.72,
+        "msgs": 3965,
+        "prompts": 379
       },
       "codex": {
-        "tokens": 15297563983,
-        "cost": 5150.96,
-        "msgs": 106856,
-        "prompts": 1606
+        "tokens": 15347042809,
+        "cost": 5187.5,
+        "msgs": 107176,
+        "prompts": 1627
       },
       "other": {
         "tokens": 0,
@@ -3555,24 +3555,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 16477855317,
-        "cost": 6000.02,
-        "msgs": 110787,
-        "prompts": 1979
+        "tokens": 16536775554,
+        "cost": 6050.22,
+        "msgs": 111141,
+        "prompts": 2006
       }
     },
     "month": {
       "claude": {
-        "tokens": 14267312708,
-        "cost": 12344.93,
-        "msgs": 52143,
-        "prompts": 5165
+        "tokens": 14276754119,
+        "cost": 12358.59,
+        "msgs": 52177,
+        "prompts": 5171
       },
       "codex": {
-        "tokens": 220020966716,
-        "cost": 93027.68,
-        "msgs": 1452813,
-        "prompts": 6927
+        "tokens": 220070445542,
+        "cost": 93064.22,
+        "msgs": 1453133,
+        "prompts": 6948
       },
       "other": {
         "tokens": 0,
@@ -3581,24 +3581,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 234288279424,
-        "cost": 105372.61,
-        "msgs": 1504956,
-        "prompts": 12092
+        "tokens": 234347199661,
+        "cost": 105422.81,
+        "msgs": 1505310,
+        "prompts": 12119
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 19693684409,
-        "cost": 22769.97,
-        "msgs": 129012,
-        "prompts": 22265
+        "tokens": 19703125820,
+        "cost": 22783.63,
+        "msgs": 129046,
+        "prompts": 22271
       },
       "codex": {
-        "tokens": 253485297034,
-        "cost": 108662.89,
-        "msgs": 1677409,
-        "prompts": 11623
+        "tokens": 253534775860,
+        "cost": 108699.43,
+        "msgs": 1677729,
+        "prompts": 11644
       },
       "other": {
         "tokens": 391115906,
@@ -3607,10 +3607,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 273570097349,
-        "cost": 131602.29,
-        "msgs": 1808230,
-        "prompts": 33888
+        "tokens": 273629017586,
+        "cost": 131652.49,
+        "msgs": 1808584,
+        "prompts": 33915
       }
     }
   },
@@ -3620,7 +3620,7 @@
       "model": "gpt-5.4",
       "tokens": 225317203802,
       "cost": 100251.06,
-      "share": 0.7618
+      "share": 0.7615
     },
     {
       "client": "claude",
@@ -3632,16 +3632,16 @@
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 12707956872,
-      "cost": 8883.39,
-      "share": 0.0675
+      "tokens": 12717398283,
+      "cost": 8897.05,
+      "share": 0.0676
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 10317776726,
-      "cost": 8058.21,
-      "share": 0.0612
+      "tokens": 10367255552,
+      "cost": 8094.75,
+      "share": 0.0615
     },
     {
       "client": "claude",
