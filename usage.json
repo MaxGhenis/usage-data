@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-04T17:24:45.682460+00:00",
+  "generatedAt": "2026-05-04T18:01:09.567535+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-04"
@@ -3515,16 +3515,16 @@
     {
       "date": "2026-05-04",
       "claude": {
-        "tokens": 309523726,
-        "cost": 206.22,
-        "msgs": 832,
-        "prompts": 107
+        "tokens": 338031427,
+        "cost": 223.31,
+        "msgs": 955,
+        "prompts": 109
       },
       "codex": {
-        "tokens": 788117810,
-        "cost": 531.88,
-        "msgs": 5750,
-        "prompts": 183
+        "tokens": 836285275,
+        "cost": 569.65,
+        "msgs": 6114,
+        "prompts": 199
       },
       "other": {
         "tokens": 0,
@@ -3537,16 +3537,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 1202536115,
-        "cost": 873.98,
-        "msgs": 4075,
-        "prompts": 390
+        "tokens": 1231043816,
+        "cost": 891.07,
+        "msgs": 4198,
+        "prompts": 392
       },
       "codex": {
-        "tokens": 15407148861,
-        "cost": 5229.18,
-        "msgs": 107536,
-        "prompts": 1634
+        "tokens": 15455316326,
+        "cost": 5266.95,
+        "msgs": 107900,
+        "prompts": 1650
       },
       "other": {
         "tokens": 0,
@@ -3555,24 +3555,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 16609684976,
-        "cost": 6103.16,
-        "msgs": 111611,
-        "prompts": 2024
+        "tokens": 16686360142,
+        "cost": 6158.02,
+        "msgs": 112098,
+        "prompts": 2042
       }
     },
     "month": {
       "claude": {
-        "tokens": 14289557489,
-        "cost": 12369.85,
-        "msgs": 52287,
-        "prompts": 5182
+        "tokens": 14318065190,
+        "cost": 12386.94,
+        "msgs": 52410,
+        "prompts": 5184
       },
       "codex": {
-        "tokens": 220130551594,
-        "cost": 93105.9,
-        "msgs": 1453493,
-        "prompts": 6955
+        "tokens": 220178719059,
+        "cost": 93143.67,
+        "msgs": 1453857,
+        "prompts": 6971
       },
       "other": {
         "tokens": 0,
@@ -3581,24 +3581,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 234420109083,
-        "cost": 105475.75,
-        "msgs": 1505780,
-        "prompts": 12137
+        "tokens": 234496784249,
+        "cost": 105530.61,
+        "msgs": 1506267,
+        "prompts": 12155
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 19715438176,
-        "cost": 22788.0,
-        "msgs": 129146,
-        "prompts": 22272
+        "tokens": 19743945877,
+        "cost": 22805.09,
+        "msgs": 129269,
+        "prompts": 22274
       },
       "codex": {
-        "tokens": 253594881912,
-        "cost": 108741.11,
-        "msgs": 1678089,
-        "prompts": 11651
+        "tokens": 253643049377,
+        "cost": 108778.88,
+        "msgs": 1678453,
+        "prompts": 11667
       },
       "other": {
         "tokens": 391115906,
@@ -3607,10 +3607,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 273701435994,
-        "cost": 131698.54,
-        "msgs": 1809044,
-        "prompts": 33923
+        "tokens": 273778111160,
+        "cost": 131753.4,
+        "msgs": 1809531,
+        "prompts": 33941
       }
     }
   },
@@ -3620,7 +3620,7 @@
       "model": "gpt-5.4",
       "tokens": 225317203802,
       "cost": 100251.06,
-      "share": 0.7612
+      "share": 0.7609
     },
     {
       "client": "claude",
@@ -3632,16 +3632,16 @@
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 12730201653,
-      "cost": 8908.32,
-      "share": 0.0676
+      "tokens": 12758709354,
+      "cost": 8925.4,
+      "share": 0.0677
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 10427361604,
-      "cost": 8136.43,
-      "share": 0.0618
+      "tokens": 10475529069,
+      "cost": 8174.2,
+      "share": 0.062
     },
     {
       "client": "claude",
