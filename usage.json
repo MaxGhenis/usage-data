@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-04T03:45:04.462445+00:00",
+  "generatedAt": "2026-05-04T04:17:15.258279+00:00",
   "dateRange": {
     "start": "2025-11-18",
-    "end": "2026-05-03"
+    "end": "2026-05-04"
   },
   "daily": [
     {
@@ -3500,10 +3500,31 @@
         "prompts": 61
       },
       "codex": {
-        "tokens": 1883222771,
-        "cost": 404.11,
-        "msgs": 13452,
+        "tokens": 1924125963,
+        "cost": 436.77,
+        "msgs": 13801,
         "prompts": 126
+      },
+      "other": {
+        "tokens": 0,
+        "cost": 0.0,
+        "msgs": 0,
+        "prompts": 0
+      }
+    },
+    {
+      "date": "2026-05-04",
+      "claude": {
+        "tokens": 0,
+        "cost": 0.0,
+        "msgs": 0,
+        "prompts": 3
+      },
+      "codex": {
+        "tokens": 27704108,
+        "cost": 19.73,
+        "msgs": 190,
+        "prompts": 16
       },
       "other": {
         "tokens": 0,
@@ -3516,16 +3537,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 900407553,
-        "cost": 677.43,
-        "msgs": 3322,
-        "prompts": 319
+        "tokens": 893012389,
+        "cost": 667.76,
+        "msgs": 3243,
+        "prompts": 286
       },
       "codex": {
-        "tokens": 15834151615,
-        "cost": 5529.56,
-        "msgs": 110852,
-        "prompts": 1826
+        "tokens": 14646735159,
+        "cost": 4717.03,
+        "msgs": 101976,
+        "prompts": 1467
       },
       "other": {
         "tokens": 0,
@@ -3534,24 +3555,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 16734559168,
-        "cost": 6206.99,
-        "msgs": 114174,
-        "prompts": 2145
+        "tokens": 15539747548,
+        "cost": 5384.79,
+        "msgs": 105219,
+        "prompts": 1753
       }
     },
     "month": {
       "claude": {
-        "tokens": 14067458373,
-        "cost": 12372.42,
-        "msgs": 51991,
-        "prompts": 5187
+        "tokens": 13980033763,
+        "cost": 12163.63,
+        "msgs": 51455,
+        "prompts": 5078
       },
       "codex": {
-        "tokens": 220166831687,
-        "cost": 92991.54,
-        "msgs": 1453593,
-        "prompts": 7071
+        "tokens": 219370137892,
+        "cost": 92593.75,
+        "msgs": 1447933,
+        "prompts": 6788
       },
       "other": {
         "tokens": 0,
@@ -3560,10 +3581,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 234234290060,
-        "cost": 105363.96,
-        "msgs": 1505584,
-        "prompts": 12258
+        "tokens": 233350171655,
+        "cost": 104757.38,
+        "msgs": 1499388,
+        "prompts": 11866
       }
     },
     "lifetime": {
@@ -3571,13 +3592,13 @@
         "tokens": 19406405464,
         "cost": 22588.67,
         "msgs": 128324,
-        "prompts": 22175
+        "prompts": 22178
       },
       "codex": {
-        "tokens": 252765860910,
-        "cost": 108176.57,
-        "msgs": 1671990,
-        "prompts": 11468
+        "tokens": 252834468210,
+        "cost": 108228.96,
+        "msgs": 1672529,
+        "prompts": 11484
       },
       "other": {
         "tokens": 391115906,
@@ -3586,10 +3607,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 272563382280,
-        "cost": 130934.67,
-        "msgs": 1802123,
-        "prompts": 33643
+        "tokens": 272631989580,
+        "cost": 130987.06,
+        "msgs": 1802662,
+        "prompts": 33662
       }
     }
   },
@@ -3599,7 +3620,7 @@
       "model": "gpt-5.4",
       "tokens": 225317203802,
       "cost": 100251.06,
-      "share": 0.7657
+      "share": 0.7654
     },
     {
       "client": "claude",
@@ -3613,14 +3634,14 @@
       "model": "claude-opus-4-7",
       "tokens": 12421050221,
       "cost": 8703.74,
-      "share": 0.0665
+      "share": 0.0664
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 9681085169,
-      "cost": 7571.97,
-      "share": 0.0578
+      "tokens": 9749692469,
+      "cost": 7624.36,
+      "share": 0.0582
     },
     {
       "client": "claude",
