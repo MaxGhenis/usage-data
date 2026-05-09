@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-09T17:42:16.353668+00:00",
+  "generatedAt": "2026-05-09T18:14:31.938422+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-09"
@@ -3620,16 +3620,16 @@
     {
       "date": "2026-05-09",
       "claude": {
-        "tokens": 632825528,
-        "cost": 395.51,
-        "msgs": 2801,
-        "prompts": 79
+        "tokens": 702521057,
+        "cost": 438.52,
+        "msgs": 3292,
+        "prompts": 83
       },
       "codex": {
-        "tokens": 1854841452,
-        "cost": 793.14,
-        "msgs": 12708,
-        "prompts": 221
+        "tokens": 1912198081,
+        "cost": 830.53,
+        "msgs": 13077,
+        "prompts": 230
       },
       "other": {
         "tokens": 0,
@@ -3642,16 +3642,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 2266815746,
-        "cost": 1494.66,
-        "msgs": 7290,
-        "prompts": 518
+        "tokens": 2336511275,
+        "cost": 1537.67,
+        "msgs": 7781,
+        "prompts": 522
       },
       "codex": {
-        "tokens": 12818757627,
-        "cost": 4619.34,
-        "msgs": 91715,
-        "prompts": 1221
+        "tokens": 12876114256,
+        "cost": 4656.73,
+        "msgs": 92084,
+        "prompts": 1230
       },
       "other": {
         "tokens": 0,
@@ -3660,24 +3660,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 15085573373,
-        "cost": 6114.0,
-        "msgs": 99005,
-        "prompts": 1739
+        "tokens": 15212625531,
+        "cost": 6194.4,
+        "msgs": 99865,
+        "prompts": 1752
       }
     },
     "month": {
       "claude": {
-        "tokens": 15306504556,
-        "cost": 11981.01,
-        "msgs": 54142,
-        "prompts": 4808
+        "tokens": 15376200085,
+        "cost": 12024.02,
+        "msgs": 54633,
+        "prompts": 4812
       },
       "codex": {
-        "tokens": 161979982419,
-        "cost": 65686.01,
-        "msgs": 1081567,
-        "prompts": 6205
+        "tokens": 162037339048,
+        "cost": 65723.4,
+        "msgs": 1081936,
+        "prompts": 6214
       },
       "other": {
         "tokens": 0,
@@ -3686,24 +3686,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 177286486975,
-        "cost": 77667.02,
-        "msgs": 1135709,
-        "prompts": 11013
+        "tokens": 177413539133,
+        "cost": 77747.42,
+        "msgs": 1136569,
+        "prompts": 11026
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 20875703834,
-        "cost": 22649.92,
-        "msgs": 131923,
-        "prompts": 21928
+        "tokens": 20945399363,
+        "cost": 22692.93,
+        "msgs": 132414,
+        "prompts": 21932
       },
       "codex": {
-        "tokens": 263701395766,
-        "cost": 112391.8,
-        "msgs": 1750253,
-        "prompts": 12563
+        "tokens": 263758752395,
+        "cost": 112429.19,
+        "msgs": 1750622,
+        "prompts": 12572
       },
       "other": {
         "tokens": 391115906,
@@ -3712,10 +3712,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 284968215506,
-        "cost": 135211.15,
-        "msgs": 1883985,
-        "prompts": 34491
+        "tokens": 285095267664,
+        "cost": 135291.55,
+        "msgs": 1884845,
+        "prompts": 34504
       }
     }
   },
@@ -3725,14 +3725,14 @@
       "model": "gpt-5.4",
       "tokens": 225317203802,
       "cost": 100251.06,
-      "share": 0.7414
+      "share": 0.741
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 15308223208,
-      "cost": 11786.0,
-      "share": 0.0872
+      "tokens": 15365579837,
+      "cost": 11823.39,
+      "share": 0.0874
     },
     {
       "client": "claude",
@@ -3744,9 +3744,9 @@
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 14413671613,
-      "cost": 10000.88,
-      "share": 0.074
+      "tokens": 14483367142,
+      "cost": 10043.89,
+      "share": 0.0742
     },
     {
       "client": "claude",
