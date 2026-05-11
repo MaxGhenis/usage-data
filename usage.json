@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-11T20:51:04.980963+00:00",
+  "generatedAt": "2026-05-11T21:24:57.808191+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-11"
@@ -3032,10 +3032,10 @@
     {
       "date": "2026-04-11",
       "claude": {
-        "tokens": 207024976,
-        "cost": 443.44,
-        "msgs": 783,
-        "prompts": 66
+        "tokens": 206904046,
+        "cost": 440.55,
+        "msgs": 778,
+        "prompts": 61
       },
       "codex": {
         "tokens": 17603371424,
@@ -3662,16 +3662,16 @@
     {
       "date": "2026-05-11",
       "claude": {
-        "tokens": 444077396,
-        "cost": 291.9,
-        "msgs": 985,
-        "prompts": 242
+        "tokens": 461988327,
+        "cost": 302.59,
+        "msgs": 1067,
+        "prompts": 246
       },
       "codex": {
-        "tokens": 1135630008,
-        "cost": 779.66,
-        "msgs": 7760,
-        "prompts": 164
+        "tokens": 1228246448,
+        "cost": 842.54,
+        "msgs": 8328,
+        "prompts": 169
       },
       "other": {
         "tokens": 0,
@@ -3684,16 +3684,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 3409419624,
-        "cost": 2237.21,
-        "msgs": 11853,
-        "prompts": 846
+        "tokens": 3427330555,
+        "cost": 2247.9,
+        "msgs": 11935,
+        "prompts": 850
       },
       "codex": {
-        "tokens": 9121260413,
-        "cost": 6564.78,
-        "msgs": 65592,
-        "prompts": 1400
+        "tokens": 9213876853,
+        "cost": 6627.66,
+        "msgs": 66160,
+        "prompts": 1405
       },
       "other": {
         "tokens": 0,
@@ -3702,24 +3702,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 12530680037,
-        "cost": 8801.99,
-        "msgs": 77445,
-        "prompts": 2246
+        "tokens": 12641207408,
+        "cost": 8875.56,
+        "msgs": 78095,
+        "prompts": 2255
       }
     },
     "month": {
       "claude": {
-        "tokens": 16799982833,
-        "cost": 12438.15,
-        "msgs": 59187,
-        "prompts": 5170
+        "tokens": 16817893764,
+        "cost": 12448.84,
+        "msgs": 59269,
+        "prompts": 5174
       },
       "codex": {
-        "tokens": 95393623431,
-        "cost": 46768.71,
-        "msgs": 640898,
-        "prompts": 5838
+        "tokens": 95486239871,
+        "cost": 46831.59,
+        "msgs": 641466,
+        "prompts": 5843
       },
       "other": {
         "tokens": 0,
@@ -3728,24 +3728,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 112193606264,
-        "cost": 59206.86,
-        "msgs": 700085,
-        "prompts": 11008
+        "tokens": 112304133635,
+        "cost": 59280.43,
+        "msgs": 700735,
+        "prompts": 11017
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 22587833548,
-        "cost": 23553.36,
-        "msgs": 137505,
-        "prompts": 22337
+        "tokens": 22605623549,
+        "cost": 23561.16,
+        "msgs": 137582,
+        "prompts": 22336
       },
       "codex": {
-        "tokens": 246666007980,
-        "cost": 115626.36,
-        "msgs": 1637844,
-        "prompts": 13119
+        "tokens": 246758624420,
+        "cost": 115689.24,
+        "msgs": 1638412,
+        "prompts": 13124
       },
       "other": {
         "tokens": 391115906,
@@ -3754,10 +3754,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 269644957434,
-        "cost": 139349.15,
-        "msgs": 1777158,
-        "prompts": 35456
+        "tokens": 269755363875,
+        "cost": 139419.83,
+        "msgs": 1777803,
+        "prompts": 35460
       }
     }
   },
@@ -3767,28 +3767,28 @@
       "model": "gpt-5.4",
       "tokens": 225266941431,
       "cost": 100233.13,
-      "share": 0.7193
+      "share": 0.7189
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 19961289736,
-      "cost": 15035.34,
-      "share": 0.1079
+      "tokens": 20053906176,
+      "cost": 15098.22,
+      "share": 0.1083
     },
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 16224995230,
-      "cost": 11156.88,
+      "tokens": 16242906161,
+      "cost": 11167.56,
       "share": 0.0801
     },
     {
       "client": "claude",
       "model": "claude-opus-4-6",
-      "tokens": 4720409531,
-      "cost": 10961.05,
-      "share": 0.0787
+      "tokens": 4720288601,
+      "cost": 10958.16,
+      "share": 0.0786
     },
     {
       "client": "claude",
