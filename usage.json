@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T16:43:16.099116+00:00",
+  "generatedAt": "2026-05-22T17:16:26.163659+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-22"
@@ -3893,16 +3893,16 @@
     {
       "date": "2026-05-22",
       "claude": {
-        "tokens": 77908973,
-        "cost": 60.96,
-        "msgs": 314,
-        "prompts": 80
+        "tokens": 97199639,
+        "cost": 79.84,
+        "msgs": 393,
+        "prompts": 91
       },
       "codex": {
-        "tokens": 1246391529,
-        "cost": 894.23,
-        "msgs": 8742,
-        "prompts": 251
+        "tokens": 1314509965,
+        "cost": 947.04,
+        "msgs": 9355,
+        "prompts": 270
       },
       "other": {
         "tokens": 0,
@@ -3915,16 +3915,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 2145300321,
-        "cost": 1492.54,
-        "msgs": 5651,
-        "prompts": 986
+        "tokens": 2164590987,
+        "cost": 1511.42,
+        "msgs": 5730,
+        "prompts": 997
       },
       "codex": {
-        "tokens": 37494473015,
-        "cost": 26653.09,
-        "msgs": 256000,
-        "prompts": 1769
+        "tokens": 37562591451,
+        "cost": 26705.9,
+        "msgs": 256613,
+        "prompts": 1788
       },
       "other": {
         "tokens": 0,
@@ -3933,24 +3933,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 39639773336,
-        "cost": 28145.63,
-        "msgs": 261651,
-        "prompts": 2755
+        "tokens": 39727182438,
+        "cost": 28217.32,
+        "msgs": 262343,
+        "prompts": 2785
       }
     },
     "month": {
       "claude": {
-        "tokens": 9238215076,
-        "cost": 6365.82,
-        "msgs": 31399,
-        "prompts": 3188
+        "tokens": 9257505742,
+        "cost": 6384.7,
+        "msgs": 31478,
+        "prompts": 3199
       },
       "codex": {
-        "tokens": 66585061337,
-        "cost": 47057.89,
-        "msgs": 463630,
-        "prompts": 6881
+        "tokens": 66653179773,
+        "cost": 47110.7,
+        "msgs": 464243,
+        "prompts": 6900
       },
       "other": {
         "tokens": 135057,
@@ -3959,24 +3959,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 75823411470,
-        "cost": 53423.91,
-        "msgs": 495033,
-        "prompts": 10069
+        "tokens": 75910820572,
+        "cost": 53495.6,
+        "msgs": 495725,
+        "prompts": 10099
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 16316675464,
-        "cost": 18355.74,
-        "msgs": 111918,
-        "prompts": 21946
+        "tokens": 16335966130,
+        "cost": 18374.62,
+        "msgs": 111997,
+        "prompts": 21957
       },
       "codex": {
-        "tokens": 289509362518,
-        "cost": 146075.47,
-        "msgs": 1931111,
-        "prompts": 15663
+        "tokens": 289577480954,
+        "cost": 146128.28,
+        "msgs": 1931724,
+        "prompts": 15682
       },
       "other": {
         "tokens": 390888394,
@@ -3985,10 +3985,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 306216926376,
-        "cost": 164600.35,
-        "msgs": 2044827,
-        "prompts": 37609
+        "tokens": 306304335478,
+        "cost": 164672.04,
+        "msgs": 2045519,
+        "prompts": 37639
       }
     }
   },
@@ -3998,14 +3998,14 @@
       "model": "gpt-5.4",
       "tokens": 225266941431,
       "cost": 100233.13,
-      "share": 0.6089
+      "share": 0.6087
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 62801073370,
-      "cost": 45483.34,
-      "share": 0.2763
+      "tokens": 62869191806,
+      "cost": 45536.15,
+      "share": 0.2765
     },
     {
       "client": "claude",
@@ -4017,9 +4017,9 @@
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 10486588775,
-      "cost": 7149.99,
-      "share": 0.0434
+      "tokens": 10505879441,
+      "cost": 7168.87,
+      "share": 0.0435
     },
     {
       "client": "claude",
