@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T04:20:19.258965+00:00",
+  "generatedAt": "2026-05-24T04:51:41.888383+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-24"
@@ -3935,15 +3935,15 @@
     {
       "date": "2026-05-24",
       "claude": {
-        "tokens": 59478,
-        "cost": 1.64,
-        "msgs": 2,
-        "prompts": 69
+        "tokens": 279378,
+        "cost": 3.39,
+        "msgs": 6,
+        "prompts": 72
       },
       "codex": {
-        "tokens": 44915442,
-        "cost": 34.54,
-        "msgs": 363,
+        "tokens": 107570130,
+        "cost": 77.91,
+        "msgs": 779,
         "prompts": 54
       },
       "other": {
@@ -3957,15 +3957,15 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 1343035895,
-        "cost": 960.2,
-        "msgs": 4021,
-        "prompts": 742
+        "tokens": 1343255795,
+        "cost": 961.95,
+        "msgs": 4025,
+        "prompts": 745
       },
       "codex": {
-        "tokens": 62187502474,
-        "cost": 44440.36,
-        "msgs": 434303,
+        "tokens": 62250157162,
+        "cost": 44483.73,
+        "msgs": 434719,
         "prompts": 1719
       },
       "other": {
@@ -3975,23 +3975,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 63530538369,
-        "cost": 45400.56,
-        "msgs": 438324,
-        "prompts": 2461
+        "tokens": 63593412957,
+        "cost": 45445.68,
+        "msgs": 438744,
+        "prompts": 2464
       }
     },
     "month": {
       "claude": {
-        "tokens": 9333783008,
-        "cost": 6449.63,
-        "msgs": 31754,
-        "prompts": 3279
+        "tokens": 9334002908,
+        "cost": 6451.38,
+        "msgs": 31758,
+        "prompts": 3282
       },
       "codex": {
-        "tokens": 90594285697,
-        "cost": 65408.99,
-        "msgs": 638674,
+        "tokens": 90656940385,
+        "cost": 65452.36,
+        "msgs": 639090,
         "prompts": 6976
       },
       "other": {
@@ -4001,23 +4001,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 99928203762,
-        "cost": 71858.82,
-        "msgs": 670432,
-        "prompts": 10255
+        "tokens": 99991078350,
+        "cost": 71903.94,
+        "msgs": 670852,
+        "prompts": 10258
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 15347906501,
-        "cost": 17633.82,
-        "msgs": 109825,
-        "prompts": 21671
+        "tokens": 15348126401,
+        "cost": 17635.57,
+        "msgs": 109829,
+        "prompts": 21674
       },
       "codex": {
-        "tokens": 317896411396,
-        "cost": 166469.55,
-        "msgs": 2134931,
+        "tokens": 317959066084,
+        "cost": 166512.92,
+        "msgs": 2135347,
         "prompts": 16039
       },
       "other": {
@@ -4027,10 +4027,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 333635206291,
-        "cost": 184272.51,
-        "msgs": 2246554,
-        "prompts": 37710
+        "tokens": 333698080879,
+        "cost": 184317.63,
+        "msgs": 2246974,
+        "prompts": 37713
       }
     }
   },
@@ -4040,14 +4040,14 @@
       "model": "gpt-5.4",
       "tokens": 225266941431,
       "cost": 100233.13,
-      "share": 0.5439
+      "share": 0.5438
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 91166039549,
-      "cost": 65841.52,
-      "share": 0.3573
+      "tokens": 91227581838,
+      "cost": 65881.9,
+      "share": 0.3574
     },
     {
       "client": "claude",
@@ -4059,8 +4059,8 @@
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 9513716254,
-      "cost": 6426.63,
+      "tokens": 9513936154,
+      "cost": 6428.38,
       "share": 0.0349
     },
     {
@@ -4108,9 +4108,9 @@
     {
       "client": "codex",
       "model": "gpt-5.3-codex-spark",
-      "tokens": 41735721,
-      "cost": 43.69,
-      "share": 0.0002
+      "tokens": 42848120,
+      "cost": 46.66,
+      "share": 0.0003
     },
     {
       "client": "other",
