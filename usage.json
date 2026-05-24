@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-24T21:22:28.161313+00:00",
+  "generatedAt": "2026-05-24T21:53:56.302739+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-24"
@@ -3935,16 +3935,16 @@
     {
       "date": "2026-05-24",
       "claude": {
-        "tokens": 149293887,
-        "cost": 146.12,
-        "msgs": 652,
-        "prompts": 273
+        "tokens": 162327816,
+        "cost": 157.33,
+        "msgs": 681,
+        "prompts": 279
       },
       "codex": {
-        "tokens": 12173446501,
-        "cost": 8623.86,
-        "msgs": 86451,
-        "prompts": 249
+        "tokens": 12213696593,
+        "cost": 8648.35,
+        "msgs": 86750,
+        "prompts": 250
       },
       "other": {
         "tokens": 0,
@@ -3957,16 +3957,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 1492270304,
-        "cost": 1104.68,
-        "msgs": 4671,
-        "prompts": 946
+        "tokens": 1505304233,
+        "cost": 1115.89,
+        "msgs": 4700,
+        "prompts": 952
       },
       "codex": {
-        "tokens": 74316033533,
-        "cost": 53029.68,
-        "msgs": 520391,
-        "prompts": 1914
+        "tokens": 74356283625,
+        "cost": 53054.17,
+        "msgs": 520690,
+        "prompts": 1915
       },
       "other": {
         "tokens": 0,
@@ -3975,24 +3975,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 75808303837,
-        "cost": 54134.36,
-        "msgs": 525062,
-        "prompts": 2860
+        "tokens": 75861587858,
+        "cost": 54170.06,
+        "msgs": 525390,
+        "prompts": 2867
       }
     },
     "month": {
       "claude": {
-        "tokens": 9483017417,
-        "cost": 6594.11,
-        "msgs": 32404,
-        "prompts": 3483
+        "tokens": 9496051346,
+        "cost": 6605.32,
+        "msgs": 32433,
+        "prompts": 3489
       },
       "codex": {
-        "tokens": 102722816756,
-        "cost": 73998.31,
-        "msgs": 724762,
-        "prompts": 7171
+        "tokens": 102763066848,
+        "cost": 74022.8,
+        "msgs": 725061,
+        "prompts": 7172
       },
       "other": {
         "tokens": 135057,
@@ -4001,24 +4001,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 112205969230,
-        "cost": 80592.62,
-        "msgs": 757170,
-        "prompts": 10654
+        "tokens": 112259253251,
+        "cost": 80628.32,
+        "msgs": 757498,
+        "prompts": 10661
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 15497140910,
-        "cost": 17778.3,
-        "msgs": 110475,
-        "prompts": 21875
+        "tokens": 15510174839,
+        "cost": 17789.51,
+        "msgs": 110504,
+        "prompts": 21881
       },
       "codex": {
-        "tokens": 330024942455,
-        "cost": 175058.87,
-        "msgs": 2221019,
-        "prompts": 16234
+        "tokens": 330065192547,
+        "cost": 175083.36,
+        "msgs": 2221318,
+        "prompts": 16235
       },
       "other": {
         "tokens": 390888394,
@@ -4027,10 +4027,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 345912971759,
-        "cost": 193006.31,
-        "msgs": 2333292,
-        "prompts": 38109
+        "tokens": 345966255780,
+        "cost": 193042.01,
+        "msgs": 2333620,
+        "prompts": 38116
       }
     }
   },
@@ -4040,14 +4040,14 @@
       "model": "gpt-5.4",
       "tokens": 225266941431,
       "cost": 100233.13,
-      "share": 0.5193
+      "share": 0.5192
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 103282786667,
-      "cost": 74402.94,
-      "share": 0.3855
+      "tokens": 103323036759,
+      "cost": 74427.44,
+      "share": 0.3856
     },
     {
       "client": "claude",
@@ -4059,9 +4059,9 @@
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 9662617525,
-      "cost": 6569.0,
-      "share": 0.034
+      "tokens": 9675651454,
+      "cost": 6580.21,
+      "share": 0.0341
     },
     {
       "client": "claude",
