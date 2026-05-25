@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T08:26:13.382859+00:00",
+  "generatedAt": "2026-05-25T08:57:33.341933+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-25"
@@ -3956,16 +3956,16 @@
     {
       "date": "2026-05-25",
       "claude": {
-        "tokens": 1964612,
-        "cost": 11.46,
-        "msgs": 37,
-        "prompts": 127
+        "tokens": 2385333,
+        "cost": 13.72,
+        "msgs": 45,
+        "prompts": 135
       },
       "codex": {
-        "tokens": 168608102,
-        "cost": 107.43,
-        "msgs": 1199,
-        "prompts": 43
+        "tokens": 194266570,
+        "cost": 122.0,
+        "msgs": 1323,
+        "prompts": 44
       },
       "other": {
         "tokens": 0,
@@ -3978,16 +3978,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 1145245717,
-        "cost": 886.97,
-        "msgs": 3904,
-        "prompts": 951
+        "tokens": 1145666438,
+        "cost": 889.23,
+        "msgs": 3912,
+        "prompts": 959
       },
       "codex": {
-        "tokens": 74051915789,
-        "cost": 52758.22,
-        "msgs": 518589,
-        "prompts": 1743
+        "tokens": 74077574257,
+        "cost": 52772.79,
+        "msgs": 518713,
+        "prompts": 1744
       },
       "other": {
         "tokens": 0,
@@ -3996,24 +3996,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 75197161506,
-        "cost": 53645.19,
-        "msgs": 522493,
-        "prompts": 2694
+        "tokens": 75223240695,
+        "cost": 53662.02,
+        "msgs": 522625,
+        "prompts": 2703
       }
     },
     "month": {
       "claude": {
-        "tokens": 9596135243,
-        "cost": 6689.09,
-        "msgs": 32634,
-        "prompts": 3629
+        "tokens": 9596555964,
+        "cost": 6691.35,
+        "msgs": 32642,
+        "prompts": 3637
       },
       "codex": {
-        "tokens": 102603872406,
-        "cost": 73785.72,
-        "msgs": 723362,
-        "prompts": 6952
+        "tokens": 102629530874,
+        "cost": 73800.29,
+        "msgs": 723486,
+        "prompts": 6953
       },
       "other": {
         "tokens": 135057,
@@ -4022,24 +4022,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 112200142706,
-        "cost": 80475.01,
-        "msgs": 756000,
-        "prompts": 10581
+        "tokens": 112226221895,
+        "cost": 80491.84,
+        "msgs": 756132,
+        "prompts": 10590
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 15620013681,
-        "cost": 17882.07,
-        "msgs": 110769,
-        "prompts": 22049
+        "tokens": 15620434402,
+        "cost": 17884.33,
+        "msgs": 110777,
+        "prompts": 22057
       },
       "codex": {
-        "tokens": 330661047702,
-        "cost": 175463.63,
-        "msgs": 2225552,
-        "prompts": 16299
+        "tokens": 330686706170,
+        "cost": 175478.2,
+        "msgs": 2225676,
+        "prompts": 16300
       },
       "other": {
         "tokens": 390888394,
@@ -4048,10 +4048,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 346671949777,
-        "cost": 193514.84,
-        "msgs": 2338119,
-        "prompts": 38348
+        "tokens": 346698028966,
+        "cost": 193531.67,
+        "msgs": 2338251,
+        "prompts": 38357
       }
     }
   },
@@ -4061,13 +4061,13 @@
       "model": "gpt-5.4",
       "tokens": 225266941431,
       "cost": 100233.13,
-      "share": 0.518
+      "share": 0.5179
     },
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 103910947848,
-      "cost": 74805.31,
+      "tokens": 103936606316,
+      "cost": 74819.88,
       "share": 0.3866
     },
     {
@@ -4075,13 +4075,13 @@
       "model": "claude-opus-4-6",
       "tokens": 4273886350,
       "cost": 9801.72,
-      "share": 0.0507
+      "share": 0.0506
     },
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 9785490296,
-      "cost": 6672.77,
+      "tokens": 9785911017,
+      "cost": 6675.04,
       "share": 0.0345
     },
     {
