@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-29T18:30:16.689117+00:00",
+  "generatedAt": "2026-05-29T19:03:38.613022+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-29"
@@ -4040,15 +4040,15 @@
     {
       "date": "2026-05-29",
       "claude": {
-        "tokens": 257775842,
-        "cost": 224.91,
-        "msgs": 786,
-        "prompts": 174
+        "tokens": 277928784,
+        "cost": 245.93,
+        "msgs": 853,
+        "prompts": 180
       },
       "codex": {
-        "tokens": 9095706679,
-        "cost": 6053.31,
-        "msgs": 63468,
+        "tokens": 9142391942,
+        "cost": 6083.77,
+        "msgs": 63758,
         "prompts": 39
       },
       "other": {
@@ -4062,15 +4062,15 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 1557295289,
-        "cost": 1376.06,
-        "msgs": 5088,
-        "prompts": 1474
+        "tokens": 1577448231,
+        "cost": 1397.08,
+        "msgs": 5155,
+        "prompts": 1480
       },
       "codex": {
-        "tokens": 118587921580,
-        "cost": 80064.64,
-        "msgs": 836763,
+        "tokens": 118634606843,
+        "cost": 80095.1,
+        "msgs": 837053,
         "prompts": 1030
       },
       "other": {
@@ -4080,23 +4080,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 120145216869,
-        "cost": 81440.7,
-        "msgs": 841851,
-        "prompts": 2504
+        "tokens": 120212055074,
+        "cost": 81492.18,
+        "msgs": 842208,
+        "prompts": 2510
       }
     },
     "month": {
       "claude": {
-        "tokens": 10561146977,
-        "cost": 7517.51,
-        "msgs": 35309,
-        "prompts": 4406
+        "tokens": 10581299919,
+        "cost": 7538.53,
+        "msgs": 35376,
+        "prompts": 4412
       },
       "codex": {
-        "tokens": 176415830942,
-        "cost": 121629.44,
-        "msgs": 1239286,
+        "tokens": 176462516205,
+        "cost": 121659.9,
+        "msgs": 1239576,
         "prompts": 6021
       },
       "other": {
@@ -4106,23 +4106,23 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 186977112976,
-        "cost": 129147.15,
-        "msgs": 1274599,
-        "prompts": 10427
+        "tokens": 187043951181,
+        "cost": 129198.63,
+        "msgs": 1274956,
+        "prompts": 10433
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 11426211234,
-        "cost": 8653.83,
-        "msgs": 37916,
-        "prompts": 7729
+        "tokens": 11446364176,
+        "cost": 8674.85,
+        "msgs": 37983,
+        "prompts": 7735
       },
       "codex": {
-        "tokens": 409052888940,
-        "cost": 226877.34,
-        "msgs": 2775431,
+        "tokens": 409099574203,
+        "cost": 226907.8,
+        "msgs": 2775721,
         "prompts": 16740
       },
       "other": {
@@ -4132,10 +4132,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 420869988568,
-        "cost": 235700.31,
-        "msgs": 2815145,
-        "prompts": 24469
+        "tokens": 420936826773,
+        "cost": 235751.79,
+        "msgs": 2815502,
+        "prompts": 24475
       }
     }
   },
@@ -4143,8 +4143,8 @@
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 182296317962,
-      "cost": 126216.29,
+      "tokens": 182343003225,
+      "cost": 126246.75,
       "share": 0.5355
     },
     {
@@ -4152,13 +4152,13 @@
       "model": "gpt-5.4",
       "tokens": 225271455618,
       "cost": 100235.61,
-      "share": 0.4253
+      "share": 0.4252
     },
     {
       "client": "claude",
       "model": "claude-opus-4-7",
-      "tokens": 10529609871,
-      "cost": 7325.72,
+      "tokens": 10529876577,
+      "cost": 7327.37,
       "share": 0.0311
     },
     {
@@ -4171,9 +4171,9 @@
     {
       "client": "claude",
       "model": "claude-opus-4-8",
-      "tokens": 384731253,
-      "cost": 325.88,
-      "share": 0.0014
+      "tokens": 404617489,
+      "cost": 345.25,
+      "share": 0.0015
     },
     {
       "client": "codex",
