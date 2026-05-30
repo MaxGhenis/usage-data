@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-29T23:55:36.046230+00:00",
+  "generatedAt": "2026-05-30T00:27:42.211976+00:00",
   "dateRange": {
     "start": "2025-11-18",
     "end": "2026-05-29"
@@ -4040,16 +4040,16 @@
     {
       "date": "2026-05-29",
       "claude": {
-        "tokens": 325867217,
-        "cost": 305.28,
-        "msgs": 1075,
-        "prompts": 251
+        "tokens": 342223732,
+        "cost": 319.57,
+        "msgs": 1165,
+        "prompts": 253
       },
       "codex": {
-        "tokens": 14875759181,
-        "cost": 9787.2,
-        "msgs": 103963,
-        "prompts": 53
+        "tokens": 14923634665,
+        "cost": 9824.55,
+        "msgs": 104277,
+        "prompts": 54
       },
       "other": {
         "tokens": 0,
@@ -4062,16 +4062,16 @@
   "summary": {
     "week": {
       "claude": {
-        "tokens": 1625386664,
-        "cost": 1456.43,
-        "msgs": 5377,
-        "prompts": 1551
+        "tokens": 1641743179,
+        "cost": 1470.72,
+        "msgs": 5467,
+        "prompts": 1553
       },
       "codex": {
-        "tokens": 124367974082,
-        "cost": 83798.53,
-        "msgs": 877258,
-        "prompts": 1044
+        "tokens": 124415849566,
+        "cost": 83835.88,
+        "msgs": 877572,
+        "prompts": 1045
       },
       "other": {
         "tokens": 0,
@@ -4080,24 +4080,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 125993360746,
-        "cost": 85254.96,
-        "msgs": 882635,
-        "prompts": 2595
+        "tokens": 126057592745,
+        "cost": 85306.6,
+        "msgs": 883039,
+        "prompts": 2598
       }
     },
     "month": {
       "claude": {
-        "tokens": 10629238352,
-        "cost": 7597.88,
-        "msgs": 35598,
-        "prompts": 4483
+        "tokens": 10645594867,
+        "cost": 7612.17,
+        "msgs": 35688,
+        "prompts": 4485
       },
       "codex": {
-        "tokens": 182195883444,
-        "cost": 125363.33,
-        "msgs": 1279781,
-        "prompts": 6035
+        "tokens": 182243758928,
+        "cost": 125400.68,
+        "msgs": 1280095,
+        "prompts": 6036
       },
       "other": {
         "tokens": 135057,
@@ -4106,24 +4106,24 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 192825256853,
-        "cost": 132961.41,
-        "msgs": 1315383,
-        "prompts": 10518
+        "tokens": 192889488852,
+        "cost": 133013.05,
+        "msgs": 1315787,
+        "prompts": 10521
       }
     },
     "lifetime": {
       "claude": {
-        "tokens": 11494302609,
-        "cost": 8734.2,
-        "msgs": 38205,
-        "prompts": 7806
+        "tokens": 11510659124,
+        "cost": 8748.49,
+        "msgs": 38295,
+        "prompts": 7808
       },
       "codex": {
-        "tokens": 414832941442,
-        "cost": 230611.23,
-        "msgs": 2815926,
-        "prompts": 16754
+        "tokens": 414880816926,
+        "cost": 230648.58,
+        "msgs": 2816240,
+        "prompts": 16755
       },
       "other": {
         "tokens": 390888394,
@@ -4132,10 +4132,10 @@
         "prompts": 0
       },
       "total": {
-        "tokens": 426718132445,
-        "cost": 239514.57,
-        "msgs": 2855929,
-        "prompts": 24560
+        "tokens": 426782364444,
+        "cost": 239566.21,
+        "msgs": 2856333,
+        "prompts": 24563
       }
     }
   },
@@ -4143,8 +4143,8 @@
     {
       "client": "codex",
       "model": "gpt-5.5",
-      "tokens": 188075324110,
-      "cost": 129949.56,
+      "tokens": 188123199594,
+      "cost": 129986.9,
       "share": 0.5426
     },
     {
@@ -4152,7 +4152,7 @@
       "model": "gpt-5.4",
       "tokens": 225272501972,
       "cost": 100236.24,
-      "share": 0.4185
+      "share": 0.4184
     },
     {
       "client": "claude",
@@ -4171,9 +4171,9 @@
     {
       "client": "claude",
       "model": "claude-opus-4-8",
-      "tokens": 446316826,
-      "cost": 383.48,
-      "share": 0.0016
+      "tokens": 462673341,
+      "cost": 397.77,
+      "share": 0.0017
     },
     {
       "client": "codex",
