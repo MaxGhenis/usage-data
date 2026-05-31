@@ -255,14 +255,18 @@ def classify_client(client_name: str) -> str:
 # ─────────────────────────────────────────────────────────
 # Pricing override
 # ─────────────────────────────────────────────────────────
-# Tokscale's bundled LiteLLM data has Anthropic Opus 4.6 priced at $5/M
-# input (3x lower than the real Anthropic published rate of $15/M).
-# We override Anthropic Claude model prices here using the real published
-# rates so the cost numbers reflect actual list prices.
+# Tokscale's bundled LiteLLM data prices every Anthropic Opus model at $5/M
+# input (exactly 3x lower than the real Anthropic published rate of $15/M),
+# so each Opus release must be listed here to get list-price-accurate costs.
+# Opus, Sonnet, and Haiku each share one price across point releases.
 ANTHROPIC_PRICING = {
-    # Opus tier
+    # Opus tier ($15/$75 in/out, $1.50/$18.75 cache read/write)
+    "claude-opus-4-8":  {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
+    "claude-opus-4-7":  {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
     "claude-opus-4-6":  {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
     "claude-opus-4-5":  {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
+    "opus-4-8":         {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
+    "opus-4-7":         {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
     "opus-4-6":         {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
     "opus-4-5":         {"input": 15, "output": 75, "cache_read": 1.50, "cache_write": 18.75},
     # Sonnet tier
