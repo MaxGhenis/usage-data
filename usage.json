@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-15T23:57:02.757984+00:00",
+  "generatedAt": "2026-06-16T00:31:40.952834+00:00",
   "dateRange": {
     "start": "2025-08-30",
-    "end": "2026-06-15"
+    "end": "2026-06-16"
   },
   "daily": [
     {
@@ -10484,9 +10484,9 @@
           "prompts": 0
         },
         "codex": {
-          "tokens": 40985512190,
-          "cost": 28042.95,
-          "msgs": 33416,
+          "tokens": 40994945417,
+          "cost": 28049.55,
+          "msgs": 33457,
           "prompts": 0
         },
         "other": {
@@ -11217,7 +11217,7 @@
         "codex": {
           "tokens": 197599286866,
           "cost": 125940.97,
-          "msgs": 56401,
+          "msgs": 56458,
           "prompts": 0
         },
         "other": {
@@ -12178,9 +12178,9 @@
       "date": "2026-06-09",
       "human": {
         "claude": {
-          "tokens": 3978597198,
+          "tokens": 3986113317,
           "cost": 499.49,
-          "msgs": 10300,
+          "msgs": 10326,
           "prompts": 107
         },
         "codex": {
@@ -12438,8 +12438,8 @@
         "claude": {
           "tokens": 115174233,
           "cost": 244.62,
-          "msgs": 1047,
-          "prompts": 267
+          "msgs": 1050,
+          "prompts": 269
         },
         "codex": {
           "tokens": 0,
@@ -12462,9 +12462,52 @@
           "prompts": 0
         },
         "codex": {
-          "tokens": 71654249,
-          "cost": 89.23,
-          "msgs": 794,
+          "tokens": 71798879,
+          "cost": 89.91,
+          "msgs": 803,
+          "prompts": 0
+        },
+        "other": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        }
+      }
+    },
+    {
+      "date": "2026-06-16",
+      "human": {
+        "claude": {
+          "tokens": 71750,
+          "cost": 0.9,
+          "msgs": 24,
+          "prompts": 25
+        },
+        "codex": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        },
+        "other": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        }
+      },
+      "automated": {
+        "claude": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        },
+        "codex": {
+          "tokens": 2383375,
+          "cost": 7.16,
+          "msgs": 80,
           "prompts": 0
         },
         "other": {
@@ -12480,10 +12523,10 @@
     "week": {
       "human": {
         "claude": {
-          "tokens": 5168685832,
+          "tokens": 5176201951,
           "cost": 1480.38,
-          "msgs": 18706,
-          "prompts": 1530
+          "msgs": 18735,
+          "prompts": 1532
         },
         "codex": {
           "tokens": 0,
@@ -12498,10 +12541,10 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 5168685832,
+          "tokens": 5176201951,
           "cost": 1480.38,
-          "msgs": 18706,
-          "prompts": 2055
+          "msgs": 18735,
+          "prompts": 2057
         }
       },
       "automated": {
@@ -12512,9 +12555,9 @@
           "prompts": 0
         },
         "codex": {
-          "tokens": 1124057714,
-          "cost": 1015.16,
-          "msgs": 14804,
+          "tokens": 1124202344,
+          "cost": 1015.84,
+          "msgs": 14813,
           "prompts": 0
         },
         "other": {
@@ -12524,23 +12567,23 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 1124057714,
-          "cost": 1015.16,
-          "msgs": 14812,
+          "tokens": 1124202344,
+          "cost": 1015.84,
+          "msgs": 14821,
           "prompts": 0
         }
       },
       "all": {
         "claude": {
-          "tokens": 5168685832,
+          "tokens": 5176201951,
           "cost": 1480.38,
-          "msgs": 18714,
-          "prompts": 1530
+          "msgs": 18743,
+          "prompts": 1532
         },
         "codex": {
-          "tokens": 1124057714,
-          "cost": 1015.16,
-          "msgs": 14804,
+          "tokens": 1124202344,
+          "cost": 1015.84,
+          "msgs": 14813,
           "prompts": 525
         },
         "other": {
@@ -12550,20 +12593,20 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 6292743546,
-          "cost": 2495.54,
-          "msgs": 33518,
-          "prompts": 2055
+          "tokens": 6300404295,
+          "cost": 2496.22,
+          "msgs": 33556,
+          "prompts": 2057
         }
       }
     },
     "month": {
       "human": {
         "claude": {
-          "tokens": 9789181510,
+          "tokens": 9796697629,
           "cost": 10607.81,
-          "msgs": 40575,
-          "prompts": 6074
+          "msgs": 40604,
+          "prompts": 6076
         },
         "codex": {
           "tokens": 0,
@@ -12578,10 +12621,10 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 9789181510,
+          "tokens": 9796697629,
           "cost": 10607.81,
-          "msgs": 40580,
-          "prompts": 10656
+          "msgs": 40609,
+          "prompts": 10658
         }
       },
       "automated": {
@@ -12592,9 +12635,9 @@
           "prompts": 0
         },
         "codex": {
-          "tokens": 227501114203,
-          "cost": 147742.94,
-          "msgs": 108019,
+          "tokens": 227501258833,
+          "cost": 147743.62,
+          "msgs": 108085,
           "prompts": 0
         },
         "other": {
@@ -12604,23 +12647,23 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 228150616189,
-          "cost": 148945.83,
-          "msgs": 109702,
+          "tokens": 228150760819,
+          "cost": 148946.51,
+          "msgs": 109768,
           "prompts": 0
         }
       },
       "all": {
         "claude": {
-          "tokens": 10438683496,
+          "tokens": 10446199615,
           "cost": 11810.7,
-          "msgs": 42258,
-          "prompts": 6074
+          "msgs": 42287,
+          "prompts": 6076
         },
         "codex": {
-          "tokens": 227501114203,
-          "cost": 147742.94,
-          "msgs": 108024,
+          "tokens": 227501258833,
+          "cost": 147743.62,
+          "msgs": 108090,
           "prompts": 4582
         },
         "other": {
@@ -12630,20 +12673,20 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 237939797699,
-          "cost": 159553.64,
-          "msgs": 150282,
-          "prompts": 10656
+          "tokens": 237947458448,
+          "cost": 159554.32,
+          "msgs": 150377,
+          "prompts": 10658
         }
       }
     },
     "lifetime": {
       "human": {
         "claude": {
-          "tokens": 24376309627,
-          "cost": 33317.17,
-          "msgs": 145326,
-          "prompts": 24616
+          "tokens": 24383897496,
+          "cost": 33318.07,
+          "msgs": 145379,
+          "prompts": 24643
         },
         "codex": {
           "tokens": 19139315559,
@@ -12658,10 +12701,10 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 43515625186,
-          "cost": 42649.44,
-          "msgs": 214969,
-          "prompts": 43414
+          "tokens": 43523213055,
+          "cost": 42650.34,
+          "msgs": 215022,
+          "prompts": 43441
         }
       },
       "automated": {
@@ -12672,9 +12715,9 @@
           "prompts": 0
         },
         "codex": {
-          "tokens": 359036354849,
-          "cost": 235907.27,
-          "msgs": 230025,
+          "tokens": 359048316081,
+          "cost": 235921.71,
+          "msgs": 230212,
           "prompts": 0
         },
         "other": {
@@ -12684,23 +12727,23 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 360991936968,
-          "cost": 239335.14,
-          "msgs": 248885,
+          "tokens": 361003898200,
+          "cost": 239349.58,
+          "msgs": 249072,
           "prompts": 0
         }
       },
       "all": {
         "claude": {
-          "tokens": 26331891746,
-          "cost": 36745.04,
-          "msgs": 164186,
-          "prompts": 24616
+          "tokens": 26339479615,
+          "cost": 36745.94,
+          "msgs": 164239,
+          "prompts": 24643
         },
         "codex": {
-          "tokens": 378175670408,
-          "cost": 245239.54,
-          "msgs": 299668,
+          "tokens": 378187631640,
+          "cost": 245253.98,
+          "msgs": 299855,
           "prompts": 18798
         },
         "other": {
@@ -12710,10 +12753,10 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 404507562154,
-          "cost": 281984.58,
-          "msgs": 463854,
-          "prompts": 43414
+          "tokens": 404527111255,
+          "cost": 281999.92,
+          "msgs": 464094,
+          "prompts": 43441
         }
       }
     }
@@ -12728,12 +12771,12 @@
         "cost": 0.0
       },
       "automated": {
-        "tokens": 348754021128,
-        "cost": 231501.44
+        "tokens": 348765982360,
+        "cost": 231515.87
       },
       "all": {
-        "tokens": 348754021128,
-        "cost": 231501.44
+        "tokens": 348765982360,
+        "cost": 231515.87
       }
     },
     {
@@ -12775,16 +12818,16 @@
       "model": "claude-opus-4-8",
       "priceSource": "Anthropic list",
       "human": {
-        "tokens": 3612036151,
-        "cost": 7558.71
+        "tokens": 3612107901,
+        "cost": 7559.6
       },
       "automated": {
         "tokens": 649501986,
         "cost": 1202.89
       },
       "all": {
-        "tokens": 4261538137,
-        "cost": 8761.6
+        "tokens": 4261609887,
+        "cost": 8762.5
       }
     },
     {
@@ -13166,7 +13209,7 @@
       "model": "claude-fable-5",
       "priceSource": "unpriced",
       "human": {
-        "tokens": 4405132944,
+        "tokens": 4412649063,
         "cost": 0.0
       },
       "automated": {
@@ -13174,7 +13217,7 @@
         "cost": 0.0
       },
       "all": {
-        "tokens": 4405132944,
+        "tokens": 4412649063,
         "cost": 0.0
       }
     }
@@ -13245,11 +13288,11 @@
       "url": "https://tokscale.ai/u/MaxGhenis",
       "rank": {
         "week": 16,
-        "month": 20,
+        "month": 21,
         "allTime": 12
       },
       "users": 1407,
-      "asOf": "2026-06-15"
+      "asOf": "2026-06-16"
     },
     "straude": {
       "url": "https://straude.com/u/maxghenis",
