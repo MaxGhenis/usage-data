@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-06-23T23:52:46.276218+00:00",
+  "generatedAt": "2026-06-24T00:29:19.231168+00:00",
   "dateRange": {
     "start": "2025-08-30",
-    "end": "2026-06-23"
+    "end": "2026-06-24"
   },
   "daily": [
     {
@@ -12818,6 +12818,49 @@
           "prompts": 0
         }
       }
+    },
+    {
+      "date": "2026-06-24",
+      "human": {
+        "claude": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        },
+        "codex": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 2,
+          "prompts": 1
+        },
+        "other": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        }
+      },
+      "automated": {
+        "claude": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        },
+        "codex": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        },
+        "other": {
+          "tokens": 0,
+          "cost": 0.0,
+          "msgs": 0,
+          "prompts": 0
+        }
+      }
     }
   ],
   "summary": {
@@ -12992,8 +13035,8 @@
         "codex": {
           "tokens": 19142656719,
           "cost": 9333.89,
-          "msgs": 69845,
-          "prompts": 19572
+          "msgs": 69847,
+          "prompts": 19573
         },
         "other": {
           "tokens": 0,
@@ -13004,8 +13047,8 @@
         "total": {
           "tokens": 45799373898,
           "cost": 45268.28,
-          "msgs": 223616,
-          "prompts": 43958
+          "msgs": 223618,
+          "prompts": 43959
         }
       },
       "automated": {
@@ -13044,8 +13087,8 @@
         "codex": {
           "tokens": 403923059902,
           "cost": 263307.48,
-          "msgs": 338569,
-          "prompts": 19572
+          "msgs": 338571,
+          "prompts": 19573
         },
         "other": {
           "tokens": 0,
@@ -13056,8 +13099,8 @@
         "total": {
           "tokens": 432535359200,
           "cost": 302669.74,
-          "msgs": 511200,
-          "prompts": 43958
+          "msgs": 511202,
+          "prompts": 43959
         }
       }
     }
