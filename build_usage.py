@@ -1,38 +1,33 @@
 #!/usr/bin/env python3
 """Build usage.json for maxghenis.com/usage.
 
-Data source: the local Logpile SQLite ledger (~/logpile/logpile.db), which
-continuously indexes every Claude Code and Codex session into a durable
-table. Logpile is the system of record, so it retains history long after
-Claude Code / Codex rotate their on-disk JSONL away, and it tags each
-session with a workflow origin (human-driven vs automated). Dollar figures
-are computed here from raw per-model token counts at public API list prices.
+Data source: raw Claude Code and Codex session JSONL on this machine,
+processed by extract.py (see its docstring for the accounting rules).
+Headlines: usage is dated to when each API call happened (per-event
+timestamps, UTC), codex resume-snapshot replays are excluded instead of
+recounted, Claude messages are deduplicated across resumed session files,
+and Claude cache-creation tokens are captured and priced. A scan cache
+plus a one-time seed from the Logpile ledger keep months alive after the
+CLIs rotate their on-disk transcripts.
 
-Two things make the token math source-specific (see read_logpile):
-  * Claude:  usage.input_tokens excludes cache, so fresh + cached are
-             disjoint; logpile's total_input is correct (it omits
-             cache-CREATION tokens, a small underprice).
-  * Codex:   the cumulative total_token_usage.input_tokens already INCLUDES
-             cached tokens, so logpile's stored total_input double-counts
-             cache. We use input(=incl-cache) + output as the true total and
-             derive uncached = input - cached.
+Dollar figures are raw per-model token counts at public API list prices
+(standard tier; no Batch/Flex/long-context modifiers), cross-checked
+against LiteLLM's pricing table. This methodology reconciles with
+`ccusage monthly` to within ~10% (residual: timezone bucketing and
+coverage of extra CODEX_HOME dirs that ccusage does not scan).
 
-Output schema:
+Output schema (unchanged):
 {
   "generatedAt": ISO8601,
   "dateRange": {start, end},
   "daily": [ {date, human:{claude,codex,other}, automated:{claude,codex,other}} ],
             each client bucket = {tokens, cost, msgs, prompts}
   "summary": {week, month, lifetime},
-            each = {human:{...,total}, automated:{...,total}, all:{...,total}}
   "byModel": [ {client, model, priceSource, human:{tokens,cost},
                 automated:{tokens,cost}, all:{tokens,cost}} ],
-  "pricing": {note, models:[{tier, input, cached, output, source}]},
+  "pricing": {note, models:[...]},
   "leaderboards": {tokscale, straude}
 }
-'all' = human + automated (summed on the client). Prompts are real
-user-typed prompts (parsed from session JSONL); they are human by
-definition, so automated prompts are always 0.
 """
 
 from __future__ import annotations
@@ -44,67 +39,18 @@ import urllib.request
 from datetime import datetime, date, timedelta, timezone
 from pathlib import Path
 from collections import defaultdict
-from typing import Optional
 
-LOGPILE_DB = Path.home() / "logpile" / "logpile.db"
+from extract import (
+    HUMAN_ORIGINS,
+    LOGPILE_DB,
+    N_FIELDS,
+    PRICING,
+    cost_usd,
+    extract_daily,
+    resolve_price,
+)
+
 USERNAME = "maxghenis"
-
-# ─────────────────────────────────────────────────────────
-# Pricing — public API list prices, $ per 1M tokens.
-# ─────────────────────────────────────────────────────────
-# cached = cache-read rate. OpenAI's published cache discount is 90%
-# (cached = 0.1 x input); Anthropic publishes cache-read explicitly.
-# Long-context / Batch / Flex / Priority modifiers are NOT applied — these
-# are standard short-context list rates. Codex's uncached input is a small
-# fraction of volume (most input is cached), so this assumption is minor.
-PRICING = {
-    "opus":          {"input": 15.0, "cached": 1.50,  "output": 75.0, "source": "Anthropic list"},
-    "sonnet":        {"input": 3.0,  "cached": 0.30,  "output": 15.0, "source": "Anthropic list"},
-    "haiku":         {"input": 1.0,  "cached": 0.10,  "output": 5.0,  "source": "Anthropic list"},
-    "gpt-5.5":       {"input": 5.0,  "cached": 0.50,  "output": 30.0, "source": "OpenAI list"},
-    "gpt-5.4":       {"input": 2.50, "cached": 0.25,  "output": 15.0, "source": "OpenAI list"},
-    "gpt-5.4-mini":  {"input": 0.75, "cached": 0.075, "output": 4.50, "source": "OpenAI list"},
-    "gpt-5.2-codex": {"input": 1.75, "cached": 0.175, "output": 14.0, "source": "OpenAI list"},
-    "gpt-4.1":       {"input": 2.0,  "cached": 0.20,  "output": 8.0,  "source": "OpenAI list"},
-}
-
-
-def resolve_price(model: str) -> tuple[dict, str]:
-    """Map a raw model id to a price tier. Returns (rates, source_label)."""
-    m = (model or "").lower()
-    if m.startswith("claude-opus"):
-        return PRICING["opus"], PRICING["opus"]["source"]
-    if m.startswith("claude-sonnet"):
-        return PRICING["sonnet"], PRICING["sonnet"]["source"]
-    if m.startswith("claude-haiku"):
-        return PRICING["haiku"], PRICING["haiku"]["source"]
-    if m.startswith("gpt-5") and "mini" in m:
-        return PRICING["gpt-5.4-mini"], PRICING["gpt-5.4-mini"]["source"]
-    if m.startswith("gpt-5.5"):
-        return PRICING["gpt-5.5"], PRICING["gpt-5.5"]["source"]
-    if m.startswith("gpt-5.4"):
-        return PRICING["gpt-5.4"], PRICING["gpt-5.4"]["source"]
-    if m.startswith("gpt-4.1"):
-        return PRICING["gpt-4.1"], PRICING["gpt-4.1"]["source"]
-    if m.startswith(("gpt-5.3", "gpt-5.2", "gpt-5.1", "gpt-5")):
-        # Low-volume tail; price at the gpt-5.2-codex rate.
-        return PRICING["gpt-5.2-codex"], "estimated (gpt-5.2-codex rate)"
-    return {"input": 0.0, "cached": 0.0, "output": 0.0}, "unpriced"
-
-
-HUMAN_ORIGINS = {"human_direct", "human_delegated"}
-
-
-def origin_group(origin: str) -> str:
-    return "human" if origin in HUMAN_ORIGINS else "automated"
-
-
-def client_of(source: str) -> str:
-    if source == "claudecode":
-        return "claude"
-    if source == "codex":
-        return "codex"
-    return "other"
 
 
 def _bucket():
@@ -112,9 +58,9 @@ def _bucket():
 
 
 # ─────────────────────────────────────────────────────────
-# Real user-typed prompts (independent of Logpile; covers the full
-# Claude Code history-file retention, which reaches back further than the
-# per-project session files).
+# Real user-typed prompts (independent of token accounting; covers the
+# full Claude Code history-file retention, which reaches back further
+# than the per-project session files).
 # ─────────────────────────────────────────────────────────
 _CLAUDE_SKIP_DISPLAY = {"/clear", "/compact", "exit", "exit0", "exit1"}
 
@@ -279,87 +225,45 @@ def parse_real_user_prompts():
 
 
 # ─────────────────────────────────────────────────────────
-# Logpile read + pricing
+# Message counts, from the Logpile ledger (session-start-day attribution;
+# counts only, not used for cost).
 # ─────────────────────────────────────────────────────────
-def read_logpile():
-    """Aggregate logpile.db into per-day, per-origin, per-client buckets and
-    a per-model rollup. Returns (by_date, by_model).
-
-    by_date[date][group][client] = {tokens, cost, msgs}
-    by_model[(client, model)]    = {human:{tokens,cost}, automated:{...}, source}
-    """
+def read_msgs_by_day():
     if not LOGPILE_DB.exists():
-        raise RuntimeError(f"logpile DB not found at {LOGPILE_DB}")
-    con = sqlite3.connect(str(LOGPILE_DB))
-    rows = con.execute(
-        """
-        SELECT substr(first_timestamp, 1, 10) AS day,
-               source,
-               COALESCE(NULLIF(model, ''), '(unknown)') AS model,
-               session_origin AS origin,
-               SUM(fresh_input_tokens)   AS fresh,
-               SUM(cached_input_tokens)  AS cached,
-               SUM(total_output_tokens)  AS output,
-               SUM(user_message_count + assistant_message_count) AS msgs
-        FROM sessions
-        WHERE username = ? AND first_timestamp IS NOT NULL AND first_timestamp != ''
-        GROUP BY day, source, model, origin
-        """,
-        (USERNAME,),
-    ).fetchall()
-    con.close()
+        return {}
+    rows = None
+    for attempt in range(3):
+        try:
+            con = sqlite3.connect(f"file:{LOGPILE_DB}?mode=ro", uri=True, timeout=30)
+            rows = con.execute(
+                """
+                SELECT substr(first_timestamp, 1, 10) AS day,
+                       source,
+                       session_origin AS origin,
+                       SUM(user_message_count + assistant_message_count) AS msgs
+                FROM sessions
+                WHERE username = ? AND first_timestamp IS NOT NULL AND first_timestamp != ''
+                GROUP BY day, source, origin
+                """,
+                (USERNAME,),
+            ).fetchall()
+            con.close()
+            break
+        except sqlite3.Error:
+            import time
 
-    by_date: dict[str, dict] = {}
-    by_model: dict[tuple, dict] = {}
-
-    for day, source, model, origin, fresh, cached, output, msgs in rows:
-        fresh = fresh or 0
-        cached = cached or 0
-        output = output or 0
-        msgs = msgs or 0
-        client = client_of(source)
-        group = origin_group(origin)
-        rates, src_label = resolve_price(model)
-
-        if source == "codex":
-            # input_tokens already includes cached; total = input + output.
-            tokens = fresh + output
-            uncached = max(0, fresh - cached)
-        else:
-            # Claude: fresh and cached are disjoint.
-            tokens = fresh + cached + output
-            uncached = fresh
-        cost = (
-            uncached * rates["input"]
-            + cached * rates["cached"]
-            + output * rates["output"]
-        ) / 1_000_000
-
-        row = by_date.setdefault(
-            day,
-            {
-                "human": {"claude": _bucket(), "codex": _bucket(), "other": _bucket()},
-                "automated": {"claude": _bucket(), "codex": _bucket(), "other": _bucket()},
-            },
-        )
-        b = row[group][client]
-        b["tokens"] += tokens
-        b["cost"] += cost
-        b["msgs"] += msgs
-
-        mk = (client, model)
-        mrow = by_model.setdefault(
-            mk,
-            {
-                "human": {"tokens": 0, "cost": 0.0},
-                "automated": {"tokens": 0, "cost": 0.0},
-                "source": src_label,
-            },
-        )
-        mrow[group]["tokens"] += tokens
-        mrow[group]["cost"] += cost
-
-    return by_date, by_model
+            time.sleep(2 * (attempt + 1))
+    if rows is None:
+        # Ledger locked by a concurrent sync; message counts are cosmetic,
+        # so skip them this cycle rather than failing the build.
+        print("  (logpile.db locked; skipping message counts this run)")
+        return {}
+    out = defaultdict(lambda: {"human": defaultdict(int), "automated": defaultdict(int)})
+    for day, source, origin, msgs in rows:
+        client = "claude" if source == "claudecode" else "codex" if source == "codex" else "other"
+        group = "human" if origin in HUMAN_ORIGINS else "automated"
+        out[day][group][client] += msgs or 0
+    return out
 
 
 def fetch_leaderboards():
@@ -407,11 +311,53 @@ def fetch_leaderboards():
     return {"tokscale": tokscale, "straude": straude}
 
 
-def build(by_date, by_model, prompts_by_date, leaderboards):
-    if not by_date:
+def build(daily_usage, msgs_by_day, prompts_by_date, leaderboards):
+    if not daily_usage:
         return None
 
-    # Merge real prompts into the human bucket (prompts are human by def.).
+    by_date: dict[str, dict] = {}
+    by_model: dict[tuple, dict] = {}
+
+    for day, groups in daily_usage.items():
+        if not day or len(day) != 10:
+            continue
+        row = by_date.setdefault(
+            day,
+            {
+                "human": {"claude": _bucket(), "codex": _bucket(), "other": _bucket()},
+                "automated": {"claude": _bucket(), "codex": _bucket(), "other": _bucket()},
+            },
+        )
+        for group, clients in groups.items():
+            for client, models in clients.items():
+                for model, v in models.items():
+                    tokens = sum(v)
+                    cost = cost_usd(model, v)
+                    b = row[group][client]
+                    b["tokens"] += tokens
+                    b["cost"] += cost
+
+                    mk = (client, model)
+                    mrow = by_model.setdefault(
+                        mk,
+                        {
+                            "human": {"tokens": 0, "cost": 0.0},
+                            "automated": {"tokens": 0, "cost": 0.0},
+                            "source": resolve_price(model)["source"],
+                        },
+                    )
+                    mrow[group]["tokens"] += tokens
+                    mrow[group]["cost"] += cost
+
+    for day, groups in msgs_by_day.items():
+        row = by_date.get(day)
+        if row is None:
+            continue
+        for group in ("human", "automated"):
+            for client, n in groups[group].items():
+                if client in row[group]:
+                    row[group][client]["msgs"] += n
+
     for day, p in prompts_by_date.items():
         row = by_date.get(day)
         if row is None:
@@ -419,7 +365,6 @@ def build(by_date, by_model, prompts_by_date, leaderboards):
         row["human"]["claude"]["prompts"] = p.get("claude", 0)
         row["human"]["codex"]["prompts"] = p.get("codex", 0)
 
-    # Round costs.
     for row in by_date.values():
         for group in ("human", "automated"):
             for client in ("claude", "codex", "other"):
@@ -504,7 +449,14 @@ def build(by_date, by_model, prompts_by_date, leaderboards):
     by_model_out.sort(key=lambda r: -r["all"]["cost"])
 
     pricing_models = [
-        {"tier": k, **{f: v[f] for f in ("input", "cached", "output", "source")}}
+        {
+            "tier": k,
+            "input": v["input"],
+            "cached": v["cached"],
+            "output": v["output"],
+            **({"cacheWrite5m": v["cw5m"], "cacheWrite1h": v["cw1h"]} if "cw5m" in v else {}),
+            "source": v["source"],
+        }
         for k, v in PRICING.items()
     ]
 
@@ -518,9 +470,14 @@ def build(by_date, by_model, prompts_by_date, leaderboards):
             "note": (
                 "Costs computed from raw per-model token counts at public API "
                 "list prices (standard short-context; no Batch/Flex/long-context "
-                "modifiers). Cached input billed at each provider's cache-read "
-                "rate. Claude cache-creation tokens are not captured by Logpile, "
-                "a small underestimate."
+                "modifiers), cross-checked against LiteLLM. Usage is dated to "
+                "when each API call happened (per-message timestamps, UTC). "
+                "Codex resume-snapshot replays are excluded; Claude messages "
+                "are deduplicated across resumed sessions; Claude cache-"
+                "creation (write) tokens are captured and priced at 5m/1h "
+                "rates. Claude history before 2026-05-09 predates on-disk "
+                "transcript retention and is seeded from the Logpile session "
+                "ledger (session-start-day attribution, no cache-write data)."
             ),
             "models": pricing_models,
         },
@@ -529,15 +486,17 @@ def build(by_date, by_model, prompts_by_date, leaderboards):
 
 
 def main():
-    print("Reading logpile.db...")
-    by_date, by_model = read_logpile()
+    print("Extracting daily usage from session JSONL (cached scan)...")
+    daily_usage = extract_daily()
+    print("Reading message counts from logpile.db...")
+    msgs_by_day = read_msgs_by_day()
     print("Parsing JSONL for real user prompts...")
     prompts_by_date = parse_real_user_prompts()
     print("Fetching leaderboards...")
     leaderboards = fetch_leaderboards()
-    output = build(by_date, by_model, prompts_by_date, leaderboards)
+    output = build(daily_usage, msgs_by_day, prompts_by_date, leaderboards)
 
-    out_path = Path.home() / "usage-tracker" / "usage.json"
+    out_path = Path(__file__).resolve().parent / "usage.json"
     with open(out_path, "w") as f:
         json.dump(output, f, indent=2, default=str)
 
