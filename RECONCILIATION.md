@@ -1,3 +1,69 @@
+# 2026-07-12 reconciliation: dashboard vs logpile strict accounting
+
+The 2026-07-11 rebuild below reconciled the dashboard to ccusage. Logpile's
+adversarial pre-launch review (findings B3+B4, `logpile
+docs/reviews/2026-07-11-sol-full-review.md`) then established that
+**ccusage-class Codex counting itself overcounts** through two paths this
+tracker shared:
+
+1. **Multi-second fork replays.** Same-second burst detection assumes a
+   copied prefix cannot cross a second boundary. Real snapshots do (one
+   replayed 36,480 records across seconds), so inherited history was
+   counted as native. Conversely, 231 fresh files that legitimately wrote
+   several counters in one second had live work discarded. Detection is
+   now structural: leaf `session_meta` with `forked_from_id` adjacent to
+   the copied ancestor's `session_meta`, native boundary at the first
+   `task_started` whose preserved `started_at` matches its own outer
+   clock.
+2. **Discarded counter-reset epochs.** The componentwise-max baseline
+   treated every cumulative-counter reset as duplication. One real root
+   session reached 8.7B input tokens, reset to zero, and continued for
+   weeks — everything after the reset was silently dropped. Explicit
+   all-zero vectors now end a billing epoch and epochs are summed; partial
+   telemetry wobbles still clamp.
+
+The same rebuild fixed a latent Claude bug the logpile comparison exposed:
+subagent transcripts emit several usage records per `(message.id,
+requestId)` — the first is the message_start placeholder with
+`output_tokens≈1`, the last carries the billed totals — and first-wins
+dedup kept the placeholder (July 2026 alone: 71M output tokens
+undercounted, ~$3.5k). Dedup is now last-wins. The Claude history seed was
+also regenerated from the ledger's post-review native columns with
+day-level arbitration (per day, scan or seed wholesale — per-model
+arbitration double-counts because the ledger buckets whole sessions under
+one model). Coverage added `~/.codex-4` and archived_sessions for all
+codex homes.
+
+## Monthly API-equivalent cost ($k, as of Jul 12)
+
+| Month | ccusage-method (7/11 table) | Strict (7/12) | Codex-only strict |
+|-------|----------------------------:|--------------:|------------------:|
+| Mar   | 7.0   | **4.9**  | 3.3  |
+| Apr   | 42.5  | **11.5** | 10.9 |
+| May   | 95.9  | **39.0** | 29.8 |
+| Jun   | 66.2  | **31.9** | 16.4 |
+| Jul (→12) | 51.8 (→11th) | **74.1** | 31.9 |
+| Lifetime | ~276.7 (as of 7/12 build) | **163.4** | — |
+
+Mar–Jun drop because inherited fork history is no longer counted (the
+fork-heavy campaign months). July rises: it gains a day and a half of new
+usage, the recovered post-reset epoch, and the corrected Claude output.
+
+## Verification against logpile `session_daily_effective`
+
+Month-by-month, native (deduplicated) columns, same corpus scope
+(`.codex-4` excluded from the comparison since logpile does not scan it):
+
+- **Codex:** Mar/May/Jun exact to the token (+0.00%); Apr +1.6% input /
+  +2.0% output; Jul +0.3% / +0.4%. The Apr/Jul residual is fully
+  attributed: 28 rollouts logpile excludes as private sessions or
+  unparseable (0.41B input — the dashboard counts their tokens since the
+  usage was billed; only content-free aggregates are published) plus 5
+  private-session stubs retaining partial ledger rows.
+- **Claude:** Jan–Jun exact (≤0.01%); Jul +0.9% input / +1.3% output —
+  the live scan runs ahead of the ledger's last sync and includes private
+  sessions.
+
 # 2026-07-11 reconciliation: dashboard vs ccusage
 
 The dashboard and `bunx ccusage@latest monthly` disagreed badly on monthly

@@ -4,17 +4,21 @@
 Data source: raw Claude Code and Codex session JSONL on this machine,
 processed by extract.py (see its docstring for the accounting rules).
 Headlines: usage is dated to when each API call happened (per-event
-timestamps, UTC), codex resume-snapshot replays are excluded instead of
-recounted, Claude messages are deduplicated across resumed session files,
-and Claude cache-creation tokens are captured and priced. A scan cache
-plus a one-time seed from the Logpile ledger keep months alive after the
-CLIs rotate their on-disk transcripts.
+timestamps, UTC), codex fork/resume replays are excluded via structural
+detection (not timing heuristics), genuine codex counter resets are
+summed as billing epochs, Claude messages are deduplicated across
+resumed session files, and Claude cache-creation tokens are captured and
+priced. A scan cache plus a one-time seed from the Logpile ledger keep
+months alive after the CLIs rotate their on-disk transcripts.
 
 Dollar figures are raw per-model token counts at public API list prices
 (standard tier; no Batch/Flex/long-context modifiers), cross-checked
 against LiteLLM's pricing table. This methodology reconciles with
-`ccusage monthly` to within ~10% (residual: timezone bucketing and
-coverage of extra CODEX_HOME dirs that ccusage does not scan).
+logpile's adversarially reviewed strict accounting (session_daily_
+effective). It intentionally diverges from `ccusage monthly` on Codex:
+ccusage-class same-second replay detection both counts inherited fork
+history that spans multiple wall-clock seconds and discards usage after
+genuine cumulative-counter resets (see RECONCILIATION.md).
 
 Output schema (unchanged):
 {
@@ -45,6 +49,7 @@ from extract import (
     LOGPILE_DB,
     N_FIELDS,
     PRICING,
+    connect_logpile_ro,
     cost_usd,
     extract_daily,
     resolve_price,
@@ -234,7 +239,7 @@ def read_msgs_by_day():
     rows = None
     for attempt in range(3):
         try:
-            con = sqlite3.connect(f"file:{LOGPILE_DB}?mode=ro", uri=True, timeout=30)
+            con = connect_logpile_ro()
             rows = con.execute(
                 """
                 SELECT substr(first_timestamp, 1, 10) AS day,
@@ -472,12 +477,15 @@ def build(daily_usage, msgs_by_day, prompts_by_date, leaderboards):
                 "list prices (standard short-context; no Batch/Flex/long-context "
                 "modifiers), cross-checked against LiteLLM. Usage is dated to "
                 "when each API call happened (per-message timestamps, UTC). "
-                "Codex resume-snapshot replays are excluded; Claude messages "
-                "are deduplicated across resumed sessions; Claude cache-"
-                "creation (write) tokens are captured and priced at 5m/1h "
-                "rates. Claude history before 2026-05-09 predates on-disk "
-                "transcript retention and is seeded from the Logpile session "
-                "ledger (session-start-day attribution, no cache-write data)."
+                "Codex fork/resume replays are excluded via structural "
+                "detection (forked_from_id lineage + task_started clock "
+                "agreement) and genuine counter resets are summed as billing "
+                "epochs; Claude messages are deduplicated across resumed "
+                "sessions; Claude cache-creation (write) tokens are captured "
+                "and priced at 5m/1h rates. Claude history before 2026-05-09 "
+                "predates on-disk transcript retention and is seeded from the "
+                "Logpile session ledger (session-start-day attribution, no "
+                "cache-write data)."
             ),
             "models": pricing_models,
         },

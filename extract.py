@@ -8,27 +8,48 @@ This is the measurement core behind usage.json. Design goals, in order:
 Codex accounting
 ----------------
 Codex rollout files carry cumulative ``total_token_usage`` counters in
-``token_count`` events. Two traps:
+``token_count`` events. Three traps (rules mirror logpile's adversarially
+reviewed strict accounting — findings B3/B4, 2026-07-11):
 
 * Resume/fork snapshots: resuming a session writes a NEW rollout file
   containing a full copy of the prior history, re-stamped to the write
-  time (thousands of token_count events inside one wall-clock second) and
-  given a fresh session id. Counting file-final totals therefore counts
-  the same history once per snapshot. We detect the leading same-second
-  burst (like ccusage does) and skip it, keeping it only as the delta
-  baseline, so each file contributes just its live continuation.
-* Counter resets: deltas are clamped at zero per component.
+  time and given a fresh session id. Counting file-final totals therefore
+  counts the same history once per snapshot. Snapshots are detected
+  STRUCTURALLY: the file opens with the new leaf ``session_meta``
+  (carrying ``forked_from_id``) immediately followed by the copied
+  ancestor's ``session_meta`` bearing exactly that id. The copied prefix
+  ends at the first ``task_started`` whose preserved ``started_at``
+  agrees with its own outer timestamp (replayed tasks keep their original
+  ``started_at`` while outer clocks are re-stamped; a snapshot with no
+  native boundary yet is inherited in full). Inherited events fold into
+  the delta baseline and contribute nothing. Wall-clock timing is NOT
+  evidence either way: fresh sessions may burst several counters into one
+  second (kept), and copied prefixes may span many seconds (still
+  skipped). The previous same-second heuristic (ccusage's method) got
+  both cases wrong.
+* Counter resets: an explicit all-zero ``total_token_usage`` vector ends
+  the current billing epoch; later counters accrue again from zero and
+  the epochs are summed. Partial downward wobbles inside an epoch still
+  clamp to zero (componentwise-max baseline per epoch), so telemetry
+  noise cannot double-count.
+* Rate-limit-only ``token_count`` heartbeats (no usage components) are
+  ignored entirely, so they can neither reset an epoch nor contribute.
 
 Claude accounting
 -----------------
-Assistant events carry per-request ``usage``. Resumed sessions copy
-history into new files, so messages are deduplicated globally by
-(message.id, requestId). cache_creation is captured, split 5m/1h when the
-breakdown is present (they bill differently).
+Assistant events carry per-request ``usage``. One API request can emit
+several records sharing (message.id, requestId): stream snapshots inside
+subagent transcripts (the first is the message_start placeholder with
+output_tokens~1; the last carries the billed totals) and verbatim copies
+in resumed-session files. Dedup is therefore global by
+(message.id, requestId) with the LAST occurrence winning — bill-faithful
+for streams, a no-op for verbatim copies. cache_creation is captured,
+split 5m/1h when the breakdown is present (they bill differently).
 
-Both scanners cache per-file results keyed by (size, mtime) in SQLite.
-Files that later disappear (Claude Code rotates transcripts after ~30
-days; codex sessions get archived) keep contributing from the cache.
+Both scanners cache per-file results keyed by (size, mtime, algo version)
+in SQLite. Files that later disappear (Claude Code rotates transcripts
+after ~30 days; codex sessions get archived) keep contributing from the
+cache.
 """
 
 from __future__ import annotations
@@ -39,6 +60,7 @@ import os
 import sqlite3
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
+from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
@@ -48,16 +70,26 @@ LOGPILE_DB = HOME / "logpile" / "logpile.db"
 SEED_PATH = TRACKER_DIR / "claude_history_seed.json"
 
 CODEX_ROOTS = [
-    HOME / ".codex" / "sessions",
-    HOME / ".codex" / "archived_sessions",
-    HOME / ".codex-2" / "sessions",
-    HOME / ".codex-3" / "sessions",
+    home_dir / sub
+    for home_dir in (
+        HOME / ".codex",
+        HOME / ".codex-2",
+        HOME / ".codex-3",
+        HOME / ".codex-4",
+    )
+    for sub in ("sessions", "archived_sessions")
 ] + [Path(p) for p in glob.glob(str(HOME / ".openclaw/agents/*/agent/codex-home/sessions"))]
 
 CLAUDE_ROOT = HOME / ".claude" / "projects"
 
 # Token vectors are [fresh_input, cache_write_5m, cache_write_1h, cache_read, output]
 N_FIELDS = 5
+
+# Bump when a scanner's accounting rules change: cached results carrying a
+# different algo version are rescanned (files still on disk) or served
+# as-is (rotated files — best available).
+CODEX_SCAN_ALGO = 2  # v2: structural fork-replay detection + billing epochs
+CLAUDE_SCAN_ALGO = 1
 
 HUMAN_ORIGINS = {"human_direct", "human_delegated"}
 
@@ -139,91 +171,195 @@ def _fallback_codex_model(first_day: str) -> str:
 # ─────────────────────────────────────────────────────────
 # Codex scanner
 # ─────────────────────────────────────────────────────────
+def _id_str(value) -> str | None:
+    """Codex ids appear as strings (occasionally ints); normalize or None."""
+    if isinstance(value, (str, int)) and str(value):
+        return str(value)
+    return None
+
+
+def _epoch_second(ts) -> int | None:
+    """ISO-8601 timestamp -> UTC epoch second (naive values assumed UTC)."""
+    if not isinstance(ts, str) or not ts.strip():
+        return None
+    value = ts.strip()
+    if value.endswith(("Z", "z")):
+        value = value[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return int(parsed.timestamp())
+
+
+def _started_at_second(value) -> int | None:
+    """task_started.started_at -> epoch second (tolerates milliseconds)."""
+    try:
+        started = float(value)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if abs(started) >= 100_000_000_000:
+        started /= 1000
+    return int(started)
+
+
+def _codex_components(totals) -> tuple[int, int, int] | None:
+    """(input, cached, output) from a total_token_usage dict.
+
+    Returns None when no usage component key is present at all —
+    rate-limit-only heartbeats must not touch accounting state.
+    """
+    if not isinstance(totals, dict):
+        return None
+    if not any(
+        k in totals
+        for k in (
+            "input_tokens",
+            "cached_input_tokens",
+            "output_tokens",
+            "reasoning_output_tokens",
+        )
+    ):
+        return None
+    return (
+        int(totals.get("input_tokens", 0) or 0),
+        int(totals.get("cached_input_tokens", 0) or 0),
+        int(totals.get("output_tokens", 0) or 0),
+    )
+
+
+def _is_explicit_reset(totals: dict) -> bool:
+    """True for an explicit all-zero cumulative vector (billing-epoch reset).
+
+    Every billed component must be present and zero (reasoning too, when
+    given). Partial dips are telemetry wobbles and merely clamp.
+    """
+    required = ("input_tokens", "cached_input_tokens", "output_tokens")
+    if not all(k in totals for k in required):
+        return False
+    try:
+        return all(
+            int(totals.get(k, 0) or 0) == 0
+            for k in (*required, "reasoning_output_tokens")
+        )
+    except (TypeError, ValueError):
+        return False
+
+
 def scan_codex_file(path: str):
     """One rollout file -> {'daily': {day: {model: [5]}}, 'meta': {...}}.
 
-    Live usage only: the leading replay burst of a resume snapshot (all
-    token_count events re-stamped into one second) is folded into the
-    delta baseline instead of being counted again.
+    Live usage only: a structurally detected fork/resume snapshot's copied
+    prefix folds into the delta baseline instead of being counted again,
+    and explicit counter resets segment the file into billing epochs that
+    are summed (see module docstring).
     """
     model = None
     first_model = None
     source = None
     originator = None
-    events = []  # (ts, model_at_event, input, cached, output, total)
+    fork_candidate = False      # line 0 is a leaf session_meta w/ forked_from_id
+    forked_from = None
+    replay_candidate = False    # + line 1 is the copied ancestor's session_meta
+    native_from = None          # line index of first clock-agreeing task_started
+    events = []  # (line_idx, ts, model_at_event, (input, cached, output), is_reset)
     try:
         with open(path, "r", errors="replace") as f:
-            for line in f:
-                if '"token_count"' in line:
-                    try:
-                        obj = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    if obj.get("type") != "event_msg":
-                        continue
-                    p = obj.get("payload", {})
-                    if p.get("type") != "token_count":
-                        continue
-                    tot = (p.get("info") or {}).get("total_token_usage") or {}
-                    if not tot:
-                        continue
-                    inp = int(tot.get("input_tokens", 0) or 0)
-                    cached = int(tot.get("cached_input_tokens", 0) or 0)
-                    out = int(tot.get("output_tokens", 0) or 0)
-                    ttl = int(tot.get("total_tokens", 0) or 0) or (inp + out)
-                    events.append((obj.get("timestamp") or "", model, inp, cached, out, ttl))
-                elif '"turn_context"' in line:
-                    try:
-                        obj = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    if obj.get("type") == "turn_context":
-                        m = obj.get("payload", {}).get("model")
-                        if m:
-                            model = m
-                            if first_model is None:
-                                first_model = m
-                elif '"session_meta"' in line and source is None:
-                    try:
-                        obj = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    if obj.get("type") != "session_meta":
-                        continue
-                    p = obj.get("payload", {})
-                    src = p.get("source")
-                    source = src if isinstance(src, str) else "subagent" if src else None
-                    originator = p.get("originator")
+            for i, line in enumerate(f):
+                if not (
+                    i < 2
+                    or '"token_count"' in line
+                    or '"turn_context"' in line
+                    or (
+                        '"task_started"' in line
+                        and replay_candidate
+                        and native_from is None
+                    )
+                    or ('"session_meta"' in line and source is None)
+                ):
+                    continue
+                try:
+                    obj = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if not isinstance(obj, dict):
+                    continue
+                otype = obj.get("type")
+                p = obj.get("payload")
+                if not isinstance(p, dict):
+                    continue
+
+                if otype == "session_meta":
+                    if i == 0:
+                        forked_from = _id_str(p.get("forked_from_id"))
+                        fork_candidate = forked_from is not None
+                    elif i == 1 and fork_candidate:
+                        replay_candidate = _id_str(p.get("id")) == forked_from
+                    if source is None:
+                        src = p.get("source")
+                        source = src if isinstance(src, str) else "subagent" if src else None
+                        originator = p.get("originator")
+                elif otype == "turn_context":
+                    m = p.get("model")
+                    if m:
+                        model = m
+                        if first_model is None:
+                            first_model = m
+                elif otype == "event_msg":
+                    ptype = p.get("type")
+                    if ptype == "token_count":
+                        totals = (p.get("info") or {}).get("total_token_usage")
+                        comp = _codex_components(totals)
+                        if comp is not None:
+                            events.append((
+                                i,
+                                obj.get("timestamp") or "",
+                                model,
+                                comp,
+                                _is_explicit_reset(totals),
+                            ))
+                    elif (
+                        ptype == "task_started"
+                        and replay_candidate
+                        and native_from is None
+                    ):
+                        started = _started_at_second(p.get("started_at"))
+                        if started is not None and started == _epoch_second(
+                            obj.get("timestamp")
+                        ):
+                            native_from = i
     except OSError:
         return None
     if not events:
         return None
 
-    default_model = first_model or _fallback_codex_model((events[0][0] or "")[:10])
-
-    # Leading replay burst: first two token_count events share a wall-clock
-    # second -> skip the whole same-second run, keep it as the baseline.
-    burst_end = 0
-    if len(events) >= 2 and events[0][0][:19] == events[1][0][:19]:
-        sec = events[0][0][:19]
-        while burst_end < len(events) and events[burst_end][0][:19] == sec:
-            burst_end += 1
-    prev = [0, 0, 0]
-    for e in events[:burst_end]:
-        prev = [max(prev[0], e[2]), max(prev[1], e[3]), max(prev[2], e[4])]
+    default_model = first_model or _fallback_codex_model((events[0][1] or "")[:10])
 
     daily: dict = defaultdict(lambda: defaultdict(lambda: [0] * N_FIELDS))
-    for ts, mdl, inp, cached, out, _ttl in events[burst_end:]:
-        m = mdl or default_model
-        di = max(0, inp - prev[0])
-        dc = max(0, cached - prev[1])
-        do = max(0, out - prev[2])
-        if di or dc or do:
-            b = daily[ts[:10]][m]
-            b[0] += max(0, di - dc)  # fresh (input includes cached)
-            b[3] += dc
-            b[4] += do
-        prev = [max(prev[0], inp), max(prev[1], cached), max(prev[2], out)]
+    baseline = [0, 0, 0]  # current billing epoch's componentwise maxima
+    for idx, ts, mdl, (inp, cached, out), is_reset in events:
+        in_replay = replay_candidate and (native_from is None or idx < native_from)
+        if is_reset and any(baseline):
+            # Explicit all-zero vector: a new billing epoch begins. Applies
+            # while folding replay too — only the terminal inherited epoch
+            # may baseline the leaf-native continuation.
+            baseline = [0, 0, 0]
+        if not in_replay:
+            di = max(0, inp - baseline[0])
+            dc = max(0, cached - baseline[1])
+            do = max(0, out - baseline[2])
+            if di or dc or do:
+                b = daily[ts[:10]][mdl or default_model]
+                b[0] += max(0, di - dc)  # fresh (input includes cached)
+                b[3] += dc
+                b[4] += do
+        baseline = [
+            max(baseline[0], inp),
+            max(baseline[1], cached),
+            max(baseline[2], out),
+        ]
 
     return {
         "daily": {d: dict(ms) for d, ms in daily.items()},
@@ -297,9 +433,13 @@ def _cache_conn():
                size INTEGER NOT NULL,
                mtime REAL NOT NULL,
                present INTEGER NOT NULL DEFAULT 1,
-               result TEXT NOT NULL
+               result TEXT NOT NULL,
+               algo INTEGER NOT NULL DEFAULT 1
            )"""
     )
+    if "algo" not in {r[1] for r in con.execute("PRAGMA table_info(files)")}:
+        con.execute("ALTER TABLE files ADD COLUMN algo INTEGER NOT NULL DEFAULT 1")
+        con.commit()
     con.execute("CREATE INDEX IF NOT EXISTS idx_files_stem ON files(stem)")
     return con
 
@@ -315,12 +455,19 @@ def _list_files(roots):
     return out
 
 
-def _scan_with_cache(con, client, files, scan_fn, workers=8):
-    """Return {path: result} for all files, using and refreshing the cache."""
+def _scan_with_cache(con, client, files, scan_fn, workers=8, algo=1):
+    """Return {path: result} for all files, using and refreshing the cache.
+
+    A cache row hits only when size, mtime, AND algo version all match, so
+    accounting-rule changes rescan every still-present file. Rotated files
+    keep serving whatever algo version they were last scanned with (best
+    available — their bytes are gone).
+    """
     cached = {
-        p: (sz, mt, res)
-        for p, sz, mt, res in con.execute(
-            "SELECT path, size, mtime, result FROM files WHERE client = ?", (client,)
+        p: (sz, mt, res, a)
+        for p, sz, mt, res, a in con.execute(
+            "SELECT path, size, mtime, result, algo FROM files WHERE client = ?",
+            (client,),
         )
     }
     todo = []
@@ -332,7 +479,12 @@ def _scan_with_cache(con, client, files, scan_fn, workers=8):
         except OSError:
             continue
         hit = cached.get(p)
-        if hit and hit[0] == st.st_size and abs(hit[1] - st.st_mtime) < 1e-6:
+        if (
+            hit
+            and hit[0] == st.st_size
+            and abs(hit[1] - st.st_mtime) < 1e-6
+            and hit[3] == algo
+        ):
             results[p] = json.loads(hit[2])
         else:
             todo.append((p, st.st_size, st.st_mtime))
@@ -346,14 +498,15 @@ def _scan_with_cache(con, client, files, scan_fn, workers=8):
                     res = {}
                 results[p] = res
                 con.execute(
-                    "INSERT OR REPLACE INTO files (path, stem, client, size, mtime, present, result) "
-                    "VALUES (?, ?, ?, ?, ?, 1, ?)",
-                    (p, Path(p).stem, client, size, mtime, json.dumps(res)),
+                    "INSERT OR REPLACE INTO files "
+                    "(path, stem, client, size, mtime, present, result, algo) "
+                    "VALUES (?, ?, ?, ?, ?, 1, ?, ?)",
+                    (p, Path(p).stem, client, size, mtime, json.dumps(res), algo),
                 )
         con.commit()
 
     # Rotated/archived files: keep cached results, marked absent.
-    for p, (sz, mt, res) in cached.items():
+    for p, (sz, mt, res, a) in cached.items():
         if p not in on_disk and p not in results:
             results[p] = json.loads(res)
     con.executemany(
@@ -386,6 +539,20 @@ def _dedupe_codex_paths(results):
 # ─────────────────────────────────────────────────────────
 # Origin classification (human vs automated), via the Logpile ledger.
 # ─────────────────────────────────────────────────────────
+def connect_logpile_ro():
+    """Open logpile.db for reading.
+
+    SQLite cannot open a WAL database with ``mode=ro`` unless the -shm
+    sidecar already exists (read-only connections may not build the WAL
+    index), i.e. only while some writer holds the db open. Fall back to a
+    plain same-user connection used strictly for SELECTs.
+    """
+    try:
+        return sqlite3.connect(f"file:{LOGPILE_DB}?mode=ro", uri=True, timeout=30)
+    except sqlite3.OperationalError:
+        return sqlite3.connect(str(LOGPILE_DB), timeout=30)
+
+
 def load_origin_map(cache_con=None):
     """{session_stem: 'human'|'automated'} from logpile.db.
 
@@ -399,9 +566,7 @@ def load_origin_map(cache_con=None):
     if LOGPILE_DB.exists():
         for attempt in range(3):
             try:
-                con = sqlite3.connect(
-                    f"file:{LOGPILE_DB}?mode=ro", uri=True, timeout=30
-                )
+                con = connect_logpile_ro()
                 rows = con.execute(
                     "SELECT session_id, session_origin FROM sessions"
                 ).fetchall()
@@ -460,6 +625,26 @@ def _claude_origin(path, origin_map):
 # ─────────────────────────────────────────────────────────
 # Aggregation
 # ─────────────────────────────────────────────────────────
+def dedupe_claude_rows(claude_results, origin_for_path):
+    """Global last-wins dedup of scanned Claude rows.
+
+    {key: (day, origin, model, vector)} — the last occurrence of each
+    (message.id, requestId) in deterministic path-then-line order wins.
+    Within a file that is the final stream snapshot of the request (the
+    one the API billed); across files, resume copies are verbatim, so
+    the choice is a no-op there.
+    """
+    picked = {}
+    for path in sorted(claude_results):
+        res = claude_results[path]
+        if not res:
+            continue
+        origin = origin_for_path(path)
+        for key, day, model, v in res.get("rows", []):
+            picked[key] = (day, origin, model, v)
+    return picked
+
+
 def _new_day():
     return {
         "human": defaultdict(lambda: defaultdict(lambda: [0] * N_FIELDS)),
@@ -475,7 +660,8 @@ def extract_daily(workers: int = 8):
     daily: dict = defaultdict(_new_day)
 
     codex_results = _scan_with_cache(
-        con, "codex", _list_files(CODEX_ROOTS), scan_codex_file, workers
+        con, "codex", _list_files(CODEX_ROOTS), scan_codex_file, workers,
+        algo=CODEX_SCAN_ALGO,
     )
     for stem, (path, res) in _dedupe_codex_paths(codex_results).items():
         origin = _codex_origin(stem, res.get("meta"), origin_map)
@@ -486,21 +672,15 @@ def extract_daily(workers: int = 8):
                     b[i] += v[i]
 
     claude_results = _scan_with_cache(
-        con, "claudecode", _list_files([CLAUDE_ROOT]), scan_claude_file, workers
+        con, "claudecode", _list_files([CLAUDE_ROOT]), scan_claude_file, workers,
+        algo=CLAUDE_SCAN_ALGO,
     )
-    seen = set()
-    for path in sorted(claude_results):
-        res = claude_results[path]
-        if not res:
-            continue
-        origin = _claude_origin(path, origin_map)
-        for key, day, model, v in res.get("rows", []):
-            if key in seen:
-                continue
-            seen.add(key)
-            b = daily[day][origin]["claude"][model]
-            for i in range(N_FIELDS):
-                b[i] += v[i]
+    for day, origin, model, v in dedupe_claude_rows(
+        claude_results, lambda p: _claude_origin(p, origin_map)
+    ).values():
+        b = daily[day][origin]["claude"][model]
+        for i in range(N_FIELDS):
+            b[i] += v[i]
     con.close()
 
     _merge_seed(daily)
@@ -518,11 +698,16 @@ def extract_daily(workers: int = 8):
 
 
 def _merge_seed(daily):
-    """Fold in pre-rotation Claude history where the ledger knows more.
+    """Fold in ledger-known Claude history where the ledger knows more.
 
-    For seed days, compare per-(day, model) token totals: if the seed
-    (Logpile session ledger) has more than what survives on disk, replace
-    the scanned rows for that model with the seed rows.
+    Arbitration is per DAY, wholesale: if the seed's (Logpile ledger's)
+    total Claude tokens for a day exceed what the scan found, that day's
+    Claude buckets are replaced entirely with the seed's. Day-level
+    arbitration is required because the two sources bucket models
+    differently — the ledger attributes a whole session's usage to one
+    model while the scan splits by per-message model — so per-model
+    comparison would double-count the same tokens across model cells.
+    Scan-won days keep usage the ledger excludes (private sessions).
     """
     if not SEED_PATH.exists():
         return
@@ -531,20 +716,20 @@ def _merge_seed(daily):
     except (OSError, json.JSONDecodeError):
         return
     for day, models in seed.get("daily", {}).items():
+        seed_cells = {}  # (origin, model) -> [5]
+        seed_total = 0
         for model, origins in models.items():
-            seed_vecs = {}
-            seed_total = 0
             for origin, v4 in origins.items():
                 v = [int(v4[0]), int(v4[1]), 0, int(v4[2]), int(v4[3])]
-                seed_vecs[origin] = v
+                seed_cells[(origin, model)] = v
                 seed_total += sum(v)
-            scanned_total = sum(
-                sum(daily[day][o]["claude"].get(model, [0] * N_FIELDS))
-                for o in ("human", "automated")
-            ) if day in daily else 0
-            if seed_total > scanned_total:
-                for o in ("human", "automated"):
-                    if model in daily[day][o]["claude"]:
-                        del daily[day][o]["claude"][model]
-                for origin, v in seed_vecs.items():
-                    daily[day][origin]["claude"][model] = v
+        scanned_total = sum(
+            sum(v)
+            for o in ("human", "automated")
+            for v in daily[day][o]["claude"].values()
+        ) if day in daily else 0
+        if seed_total > scanned_total:
+            for o in ("human", "automated"):
+                daily[day][o]["claude"].clear()
+            for (origin, model), v in seed_cells.items():
+                daily[day][origin]["claude"][model] = v

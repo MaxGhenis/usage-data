@@ -1,0 +1,6 @@
+{"timestamp":"2026-06-08T11:39:04.000Z","type":"session_meta","payload":{"id":"fresh-thread","timestamp":"2026-06-08T11:39:04.000Z","cwd":"/tmp/fresh","source":"vscode"}}
+{"timestamp":"2026-06-08T11:39:04.100Z","type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"Fresh task"}]}}
+{"timestamp":"2026-06-08T11:39:04.200Z","type":"response_item","payload":{"type":"function_call","name":"shell","call_id":"call-fresh","arguments":"{\"command\":\"pytest tests\"}"}}
+{"timestamp":"2026-06-08T11:39:04.300Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":1000,"cached_input_tokens":600,"output_tokens":50,"reasoning_output_tokens":10}}}}
+{"timestamp":"2026-06-08T11:39:04.900Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":2000,"cached_input_tokens":1400,"output_tokens":90,"reasoning_output_tokens":20}}}}
+{"timestamp":"2026-06-08T11:40:10.000Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":3000,"cached_input_tokens":2400,"output_tokens":120,"reasoning_output_tokens":30}}}}
