@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T00:05:21.369475+00:00",
+  "generatedAt": "2026-07-12T00:45:17.591064+00:00",
   "dateRange": {
     "start": "2025-11-30",
     "end": "2026-07-12"
@@ -9641,10 +9641,10 @@
       "date": "2026-07-12",
       "human": {
         "claude": {
-          "tokens": 17602077,
-          "cost": 26.87,
+          "tokens": 150769408,
+          "cost": 272.7,
           "msgs": 0,
-          "prompts": 9
+          "prompts": 58
         },
         "codex": {
           "tokens": 0,
@@ -9667,8 +9667,8 @@
           "prompts": 0
         },
         "codex": {
-          "tokens": 6662361,
-          "cost": 4.91,
+          "tokens": 171545475,
+          "cost": 117.51,
           "msgs": 0,
           "prompts": 0
         },
@@ -9845,10 +9845,10 @@
     "lifetime": {
       "human": {
         "claude": {
-          "tokens": 62016807442,
-          "cost": 66318.46,
+          "tokens": 62149974773,
+          "cost": 66564.29,
           "msgs": 0,
-          "prompts": 32991
+          "prompts": 33040
         },
         "codex": {
           "tokens": 128151051733,
@@ -9863,10 +9863,10 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 190167859175,
-          "cost": 128338.05,
+          "tokens": 190301026506,
+          "cost": 128583.88,
           "msgs": 0,
-          "prompts": 53802
+          "prompts": 53851
         }
       },
       "automated": {
@@ -9877,8 +9877,8 @@
           "prompts": 0
         },
         "codex": {
-          "tokens": 215653965031,
-          "cost": 144319.8,
+          "tokens": 215818848145,
+          "cost": 144432.4,
           "msgs": 0,
           "prompts": 0
         },
@@ -9889,22 +9889,22 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 217647390878,
-          "cost": 145734.6,
+          "tokens": 217812273992,
+          "cost": 145847.2,
           "msgs": 0,
           "prompts": 0
         }
       },
       "all": {
         "claude": {
-          "tokens": 64010233289,
-          "cost": 67733.26,
+          "tokens": 64143400620,
+          "cost": 67979.09,
           "msgs": 0,
-          "prompts": 32991
+          "prompts": 33040
         },
         "codex": {
-          "tokens": 343805016764,
-          "cost": 206339.39,
+          "tokens": 343969899878,
+          "cost": 206451.99,
           "msgs": 0,
           "prompts": 20811
         },
@@ -9915,10 +9915,10 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 407815250053,
-          "cost": 274072.65,
+          "tokens": 408113300498,
+          "cost": 274431.08,
           "msgs": 0,
-          "prompts": 53802
+          "prompts": 53851
         }
       }
     }
@@ -9963,16 +9963,16 @@
       "model": "claude-fable-5",
       "priceSource": "Anthropic list",
       "human": {
-        "tokens": 18252064812,
-        "cost": 32976.1
+        "tokens": 18341825344,
+        "cost": 33170.87
       },
       "automated": {
         "tokens": 23976277,
         "cost": 35.74
       },
       "all": {
-        "tokens": 18276041089,
-        "cost": 33011.84
+        "tokens": 18365801621,
+        "cost": 33206.6
       }
     },
     {
@@ -9980,16 +9980,16 @@
       "model": "claude-opus-4-8",
       "priceSource": "Anthropic list",
       "human": {
-        "tokens": 24720559136,
-        "cost": 21858.33
+        "tokens": 24763965935,
+        "cost": 21909.4
       },
       "automated": {
         "tokens": 663533724,
         "cost": 637.18
       },
       "all": {
-        "tokens": 25384092860,
-        "cost": 22495.51
+        "tokens": 25427499659,
+        "cost": 22546.58
       }
     },
     {
@@ -10001,12 +10001,12 @@
         "cost": 19561.7
       },
       "automated": {
-        "tokens": 1035623568,
-        "cost": 721.86
+        "tokens": 1200506682,
+        "cost": 834.46
       },
       "all": {
-        "tokens": 31403249383,
-        "cost": 20283.56
+        "tokens": 31568132497,
+        "cost": 20396.16
       }
     },
     {
