@@ -92,7 +92,7 @@ N_FIELDS = 5
 # different algo version are rescanned (files still on disk) or served
 # as-is (rotated files — best available).
 CODEX_SCAN_ALGO = 2  # v2: structural fork-replay detection + billing epochs
-CLAUDE_SCAN_ALGO = 1
+CLAUDE_SCAN_ALGO = 2  # v2: fast-mode requests scanned as "<model>-fast"
 
 HUMAN_ORIGINS = {"human_direct", "human_delegated"}
 
@@ -123,6 +123,11 @@ PRICING = {
     "claude-opus-5-5":  {"input": 4.0,  "cached": 0.20, "output": 20.0, "cw5m": 5.00,  "cw1h": 8.0,  "source": "Anthropic list"},
     "claude-opus-5":    {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
     "claude-opus-4-8":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
+    # Fast mode (usage.speed == "fast"; scan_claude_file appends "-fast"):
+    # 2x input/output, with the model's cache multipliers on top.
+    "claude-opus-5-5-fast": {"input": 8.0,  "cached": 0.40, "output": 40.0, "cw5m": 10.0,  "cw1h": 16.0, "source": "Anthropic list (fast mode)"},
+    "claude-opus-5-fast":   {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list (fast mode)"},
+    "claude-opus-4-8-fast": {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list (fast mode)"},
     "claude-opus-4-7":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
     "claude-opus-4-6":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
     "claude-opus-4-5":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
@@ -156,11 +161,12 @@ _UNPRICED = {"input": 0.0, "cached": 0.0, "output": 0.0, "source": "unpriced"}
 
 # What may follow a tier key without changing the price: a provider date
 # stamp (claude-haiku-4-5-20251001, gpt-5.4-2026-03-05) and/or a Codex
-# product variant (gpt-5.2-codex, gpt-5.3-codex-spark). Anything else —
-# above all a version component, as in claude-opus-5 + "-5" — is a
-# different model.
+# product variant billed at its base model's rates (gpt-5.2-codex,
+# gpt-5.1-codex-max, gpt-5.3-codex-spark). Anything else is a different
+# model: above all a version component, as in claude-opus-5 + "-5", but
+# also cheaper variants such as -codex-mini and -mini, and "-fast".
 _TIER_SUFFIX = re.compile(
-    r"(?:-\d{8}|-\d{4}-\d{2}-\d{2})?(?:-(?:codex(?:-max|-mini|-spark)?|latest))?"
+    r"(?:-\d{8}|-\d{4}-\d{2}-\d{2})?(?:-(?:codex(?:-max|-spark)?|latest))?"
 )
 
 
@@ -433,6 +439,9 @@ def scan_claude_file(path: str):
                 model = msg.get("model") or "(unknown)"
                 if model == "<synthetic>":
                     continue
+                if usage.get("speed") == "fast":
+                    # Billed at the fast-mode rates, its own PRICING tier.
+                    model = f"{model}-fast"
                 mid = msg.get("id")
                 rid = obj.get("requestId")
                 key = f"{mid}:{rid}" if (mid and rid) else (obj.get("uuid") or f"{os.path.basename(path)}:{i}")
@@ -671,10 +680,12 @@ def _snapshot_rank(day, origin, model, v):
     placeholder with output_tokens~1, then the billed final) plus copies
     in other files — verbatim resume copies, and occasionally truncated
     ones carrying only part of the usage. The billed final dominates the
-    others componentwise (true for all but 2 of the 1.03M multi-record
-    requests on disk on 2026-09-28), so the largest token total picks it.
-    The trailing fields only break exact ties, making the pick
-    independent of file and line order.
+    others componentwise (true for all but 2 of the 1,034,078
+    multi-record requests in the 2026-09-28 scan cache), so the largest
+    token total picks it. The trailing fields only break exact ties,
+    making the pick independent of file and line order; an identical
+    record present in both a human- and an automated-origin file counts
+    as "human" (the larger string).
     """
     return (sum(v), v[4], tuple(v), day, model, origin)
 

@@ -20,19 +20,27 @@ $117.2k. The suspected cause was double counting. **It was pricing.**
    truncated resume copy over the billed record whenever the copy's file
    sorted later (July: −$40.26). The most complete record now wins.
 
-Deduplication itself was already right. An independent recount straight
-from the raw JSONL, and ccusage 20.0.24, both match the published Claude
-token counts. On 9/24 UTC, for example, there are 180,050 records but
-93,768 unique requests. The published figure was the deduplicated one,
-and counting every record would have doubled it.
+Double counting was not the cause. An independent recount straight from
+the raw JSONL, and ccusage 20.0.24, both match the published Claude token
+counts. On 9/24 UTC, for example, there are 180,050 records but 93,768
+unique requests. The published figure was the deduplicated one, and
+counting every record would have doubled it.
 
 ## Fix
 
-- Explicit rows for every generation, taken from Anthropic's pricing page.
-- A row applies only to its own id, a date stamp, or a Codex variant
-  suffix. A new generation resolves to "unpriced" and never to an older
-  row, and unpriced models are listed under `pricing.unpriced`.
-- Dedup keeps the most complete record per `(message.id, requestId)`.
+- Explicit rows for every generation, taken from Anthropic's pricing page,
+  plus fast-mode rows. Requests with `usage.speed == "fast"` bill at 2x
+  input/output with the cache multipliers on top, and are now scanned as
+  `<model>-fast`, which bumps the Claude scan algorithm to v2 and triggers
+  a one-time rescan.
+- A row applies only to its own id, optionally followed by a date stamp
+  and/or a Codex variant billed at base rates (`-codex`, `-codex-max`,
+  `-codex-spark`). A new generation or a cheaper variant (`-mini`,
+  `-codex-mini`) resolves to "unpriced", never to an older row. Unpriced
+  models are listed under `pricing.unpriced` and printed to stderr.
+- Dedup keeps the most complete record per `(message.id, requestId)`. Of
+  the 1,034,078 requests with more than one record in the 2026-09-28 scan
+  cache, all but 2 have one record that dominates the rest componentwise.
 - Property tests cover these rules in `tests/test_accounting_properties.py`.
 
 ## Claude $ by month (UTC days unless noted)
@@ -41,18 +49,32 @@ and counting every record would have doubled it.
 |-------|--------------------:|------:|---------------------------------:|-------------------------------------:|
 | Jul   | 108,512 | **104,080.06** | 104,080.06 | 103,640.33 |
 | Aug   | 92,851  | **86,875.83**  | 86,870.03  | 88,343.45  |
-| Sep (→ 9/28 19:13Z) | 387,596 | **117,769.80** | 120,817.43 (run later on 9/28) | 117,243.31 (board as of 9/28 18:10Z) |
+| Sep (→ 9/28 19:13Z) | 387,596 | **117,769.80** | 120,760.77 (collected 9/29 00:10Z) | 117,243.31 (board as of 9/28 18:10Z) |
 
-September 1–27 matches ccusage day by day. The 9/28 difference is
-collection time. The straude gaps are day boundaries (ET vs UTC) plus
-Sonnet 5, which straude's collector left unpriced on 7/4–7/7 (−$311).
+September 1–27 matches ccusage day by day. The whole September difference
+is 9/28, which ccusage collected about five hours after the scan. The
+August residual (+$5.80) includes a compaction session in which ccusage
+keeps a record with 44,693 fewer output tokens: ccusage prefers the
+non-sidechain record, and this dedup keeps the most complete one. Which of
+the two was billed is unverified.
+
+For July, the straude gap is explained: day boundaries (ET vs UTC) on
+7/1–7/3 (−$234), and Sonnet 5, which straude's collector left unpriced on
+7/4–7/7 (−$311). September 1–27 on straude equals ccusage in ET days. The
+August gap to straude has not been broken down.
+
+Evidence, on Max's Mac: `~/reviews/usage-reconciliation-2026-09-28/` —
+refuter/ (independent raw recount), claude-day-recon/step1–4 logs,
+straude-side/attribution.json, main/dominance_check.log and
+recompute_fixed.py.
 
 ## Codex
 
 This change leaves Codex accounting alone. Straude's July total of
 $138,326.53 is $103,640 of Claude plus $34,686 of Codex. The dashboard's
-July Codex, $139,118, is under separate audit. `gpt-6-astra` (19.6B tokens,
-mostly September) has no price row yet and publishes at $0.
+July Codex, $139,118, is under separate audit. Three Codex ids have no
+price row yet and publish at $0: `gpt-6-astra` (19.6B tokens, mostly
+September), `gpt-6-sol` (3.95M) and `codex-auto-review` (0.50M).
 
 # 2026-07-12 reconciliation: dashboard vs logpile strict accounting
 

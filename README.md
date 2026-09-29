@@ -39,7 +39,8 @@ content, no file paths, no project names.
   to its own model id (plus date stamps and Codex variants such as
   `-codex`), so a new generation such as `claude-opus-5-5` can never
   inherit an older row's rates; a model with no row is published at $0
-  and named under `pricing.unpriced` in `usage.json`.
+  and named under `pricing.unpriced` in `usage.json`. Claude fast-mode
+  requests are priced at their own fast-mode rows.
 - **Durability.** A local scan cache (keyed by size, mtime, and accounting-
   algorithm version) retains per-file results after Claude Code rotates
   transcripts (~30 days) or codex archives sessions. For days whose

@@ -42,6 +42,7 @@ from __future__ import annotations
 import json
 import glob
 import sqlite3
+import sys
 import urllib.request
 from datetime import datetime, date, timedelta, timezone
 from pathlib import Path
@@ -59,6 +60,13 @@ from extract import (
 )
 
 USERNAME = "maxghenis"
+
+
+def _fmt_tokens(n: int) -> str:
+    for unit, scale in (("B", 1e9), ("M", 1e6), ("K", 1e3)):
+        if n >= scale:
+            return f"{n / scale:.2f}{unit}"
+    return str(n)
 
 
 def _bucket():
@@ -534,8 +542,9 @@ def main():
     print(f"\nWrote {out_path}")
     for r in output["pricing"]["unpriced"]:
         print(
-            f"  WARNING: {r['client']} model {r['model']} has no PRICING tier; "
-            f"{r['tokens']/1e9:.2f}B tokens published at $0"
+            f"WARNING: {r['client']} model {r['model']} has no PRICING tier; "
+            f"{_fmt_tokens(r['tokens'])} tokens published at $0",
+            file=sys.stderr,
         )
     print(f"  Date range: {output['dateRange']['start']} → {output['dateRange']['end']}")
     for w in ("week", "month", "lifetime"):
