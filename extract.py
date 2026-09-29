@@ -128,6 +128,8 @@ PRICING = {
     "claude-opus-5-5-fast": {"input": 8.0,  "cached": 0.40, "output": 40.0, "cw5m": 10.0,  "cw1h": 16.0, "source": "Anthropic list (fast mode)"},
     "claude-opus-5-fast":   {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list (fast mode)"},
     "claude-opus-4-8-fast": {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list (fast mode)"},
+    # Opus 4.6 accepts speed="fast" but runs and bills at standard rates.
+    "claude-opus-4-6-fast": {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list (4.6 fast bills standard)"},
     "claude-opus-4-7":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
     "claude-opus-4-6":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
     "claude-opus-4-5":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
@@ -682,7 +684,8 @@ def _snapshot_rank(day, origin, model, v):
     ones carrying only part of the usage. The billed final dominates the
     others componentwise (true for all but 2 of the 1,034,078
     multi-record requests in the 2026-09-28 scan cache), so the largest
-    token total picks it. The trailing fields only break exact ties,
+    token total picks it. (In those two, the largest total may be a
+    placeholder: about $0.10 in all, and ccusage keeps the same record.) The trailing fields only break exact ties,
     making the pick independent of file and line order; an identical
     record present in both a human- and an automated-origin file counts
     as "human" (the larger string).

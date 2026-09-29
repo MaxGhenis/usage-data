@@ -337,7 +337,6 @@ def test_date_stamped_ids_keep_their_tier(tier, stamp):
 @pytest.mark.parametrize("model", [
     "gpt-5.1-codex-mini",      # its own, cheaper tier; not gpt-5.1's
     "gpt-5-mini",
-    "claude-opus-4-6-fast",    # Opus 4.6 has no fast mode, so no row
     "claude-opus-5-5[1m]",
     # Seen in the data through 2026-09-28; rows pending the Codex audit.
     "gpt-6-astra",
@@ -352,6 +351,9 @@ def test_ids_without_their_own_row_are_unpriced(model):
     ("claude-opus-5-5-fast", (8.0, 10.0, 16.0, 0.40, 40.0)),
     ("claude-opus-5-fast", (10.0, 12.50, 20.0, 1.00, 50.0)),
     ("claude-opus-4-8-fast", (10.0, 12.50, 20.0, 1.00, 50.0)),
+    # "Claude Opus 4.6 (requests run at standard speed and are billed at
+    # standard rates)" — pricing page, fast mode section.
+    ("claude-opus-4-6-fast", (5.0, 6.25, 10.0, 0.50, 25.0)),
 ])
 def test_fast_mode_rates(model, rates):
     r = resolve_price(model)
