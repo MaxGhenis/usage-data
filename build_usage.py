@@ -8,7 +8,10 @@ timestamps, UTC), codex fork/resume replays are excluded via structural
 detection (not timing heuristics), genuine codex counter resets are
 summed as billing epochs, Claude messages are deduplicated across
 resumed session files, and Claude cache-creation tokens are captured and
-priced. A scan cache plus a one-time seed from the Logpile ledger keep
+priced. Every model is priced at its own generation's list rates
+(extract.PRICING); a model with no listed rate is published at $0 and
+named under pricing.unpriced rather than borrowing a neighbour's price.
+A scan cache plus a one-time seed from the Logpile ledger keep
 months alive after the CLIs rotate their on-disk transcripts.
 
 Dollar figures are raw per-model token counts at public API list prices
@@ -29,7 +32,7 @@ Output schema (unchanged):
   "summary": {week, month, lifetime},
   "byModel": [ {client, model, priceSource, human:{tokens,cost},
                 automated:{tokens,cost}, all:{tokens,cost}} ],
-  "pricing": {note, models:[...]},
+  "pricing": {note, models:[...], unpriced:[{client, model, tokens}]},
   "leaderboards": {tokscale, straude}
 }
 """
@@ -453,6 +456,20 @@ def build(daily_usage, msgs_by_day, prompts_by_date, leaderboards):
         )
     by_model_out.sort(key=lambda r: -r["all"]["cost"])
 
+    # Models with usage but no PRICING tier are published at $0 and listed
+    # here, so a new model generation shows up instead of being silently
+    # mispriced (see extract.resolve_price).
+    unpriced = sorted(
+        (
+            {"client": client, "model": model,
+             "tokens": v["human"]["tokens"] + v["automated"]["tokens"]}
+            for (client, model), v in by_model.items()
+            if v["source"] == "unpriced"
+            and v["human"]["tokens"] + v["automated"]["tokens"] > 0
+        ),
+        key=lambda r: -r["tokens"],
+    )
+
     pricing_models = [
         {
             "tier": k,
@@ -480,14 +497,19 @@ def build(daily_usage, msgs_by_day, prompts_by_date, leaderboards):
                 "Codex fork/resume replays are excluded via structural "
                 "detection (forked_from_id lineage + task_started clock "
                 "agreement) and genuine counter resets are summed as billing "
-                "epochs; Claude messages are deduplicated across resumed "
-                "sessions; Claude cache-creation (write) tokens are captured "
-                "and priced at 5m/1h rates. Claude history before 2026-05-09 "
+                "epochs; Claude API requests are deduplicated across stream "
+                "snapshots and resumed sessions by (message id, request id), "
+                "keeping the most complete record; Claude cache-creation "
+                "(write) tokens are captured and priced at 5m/1h rates. Each "
+                "model is priced at its own generation's list rates; models "
+                "without a listed rate are published at $0 and named under "
+                "pricing.unpriced. Claude history before 2026-05-09 "
                 "predates on-disk transcript retention and is seeded from the "
                 "Logpile session ledger (session-start-day attribution, no "
                 "cache-write data)."
             ),
             "models": pricing_models,
+            "unpriced": unpriced,
         },
         "leaderboards": leaderboards,
     }
@@ -510,6 +532,11 @@ def main():
 
     s = output["summary"]
     print(f"\nWrote {out_path}")
+    for r in output["pricing"]["unpriced"]:
+        print(
+            f"  WARNING: {r['client']} model {r['model']} has no PRICING tier; "
+            f"{r['tokens']/1e9:.2f}B tokens published at $0"
+        )
     print(f"  Date range: {output['dateRange']['start']} → {output['dateRange']['end']}")
     for w in ("week", "month", "lifetime"):
         for g in ("human", "automated", "all"):
