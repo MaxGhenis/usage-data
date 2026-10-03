@@ -40,11 +40,13 @@ Claude accounting
 Assistant events carry per-request ``usage``. One API request can emit
 several records sharing (message.id, requestId): stream snapshots inside
 subagent transcripts (the first is the message_start placeholder with
-output_tokens~1; the last carries the billed totals) and verbatim copies
-in resumed-session files. Dedup is therefore global by
-(message.id, requestId) with the LAST occurrence winning — bill-faithful
-for streams, a no-op for verbatim copies. cache_creation is captured,
-split 5m/1h when the breakdown is present (they bill differently).
+output_tokens~1; the last carries the billed totals), verbatim copies
+in resumed-session files, and occasional truncated copies. Dedup is
+therefore global by (message.id, requestId), keeping the most complete
+record (largest token total) — bill-faithful for streams, a no-op for
+verbatim copies, and independent of file order. cache_creation is
+captured, split 5m/1h when the breakdown is present (they bill
+differently).
 
 Both scanners cache per-file results keyed by (size, mtime, algo version)
 in SQLite. Files that later disappear (Claude Code rotates transcripts
@@ -57,6 +59,7 @@ from __future__ import annotations
 import glob
 import json
 import os
+import re
 import sqlite3
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
@@ -89,29 +92,55 @@ N_FIELDS = 5
 # different algo version are rescanned (files still on disk) or served
 # as-is (rotated files — best available).
 CODEX_SCAN_ALGO = 2  # v2: structural fork-replay detection + billing epochs
-CLAUDE_SCAN_ALGO = 1
+CLAUDE_SCAN_ALGO = 2  # v2: fast-mode requests scanned as "<model>-fast"
 
 HUMAN_ORIGINS = {"human_direct", "human_delegated"}
 
 
 # ─────────────────────────────────────────────────────────
 # Pricing — public API list prices, $ per 1M tokens.
-# Cross-checked against LiteLLM model_prices_and_context_window.json
-# (2026-07-11) and provider pricing pages. cache_read is the cache-hit
-# rate; cw5m/cw1h are Anthropic prompt-cache write rates (1.25x / 2x
-# input). OpenAI does not bill cache writes.
+# Anthropic rows: platform.claude.com/docs/en/about-claude/pricing
+# (model pricing table, read 2026-09-29). Claude 4.6+ bill the full 1M
+# context at these rates (no long-context premium). cache_read is the
+# cache-hit rate — 0.1x input, except 0.05x on Opus 5.5 and 0.025x on
+# Fable 5.1; cw5m/cw1h are prompt-cache write rates (1.25x / 2x input).
+# OpenAI rows cross-checked against LiteLLM model_prices_and_context_
+# window.json (2026-07-11); OpenAI does not bill cache writes.
+#
+# Keys are model tiers. resolve_price() matches a key only when the rest
+# of the id is a date stamp or a Codex product variant, never a version
+# component, so every new model generation needs its own row here: an
+# unknown generation resolves to "unpriced" and the build reports it,
+# instead of silently borrowing an older generation's price. (Until
+# 2026-09-28, prefix matching priced claude-opus-5 and claude-opus-5-5 as
+# legacy Opus 4.1 and claude-fable-5-1 cache reads as Fable 5 — about
+# $270k of phantom September cost.)
 # ─────────────────────────────────────────────────────────
 PRICING = {
     # Anthropic
-    "claude-fable-5":  {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list"},
-    "claude-opus-4-8": {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
-    "claude-opus-4-7": {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
-    "claude-opus-4-6": {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
-    "claude-opus-4-5": {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
-    "claude-opus":     {"input": 15.0, "cached": 1.50, "output": 75.0, "cw5m": 18.75, "cw1h": 30.0, "source": "Anthropic list"},  # Opus <= 4.1
-    "claude-sonnet-5": {"input": 2.0,  "cached": 0.20, "output": 10.0, "cw5m": 2.50,  "cw1h": 4.0,  "source": "Anthropic list"},
-    "claude-sonnet":   {"input": 3.0,  "cached": 0.30, "output": 15.0, "cw5m": 3.75,  "cw1h": 6.0,  "source": "Anthropic list"},
-    "claude-haiku":    {"input": 1.0,  "cached": 0.10, "output": 5.0,  "cw5m": 1.25,  "cw1h": 2.0,  "source": "Anthropic list"},
+    "claude-fable-5-1": {"input": 10.0, "cached": 0.25, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list"},
+    "claude-fable-5":   {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list"},
+    "claude-opus-5-5":  {"input": 4.0,  "cached": 0.20, "output": 20.0, "cw5m": 5.00,  "cw1h": 8.0,  "source": "Anthropic list"},
+    "claude-opus-5":    {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
+    "claude-opus-4-8":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
+    # Fast mode (usage.speed == "fast"; scan_claude_file appends "-fast"):
+    # 2x input/output, with the model's cache multipliers on top.
+    "claude-opus-5-5-fast": {"input": 8.0,  "cached": 0.40, "output": 40.0, "cw5m": 10.0,  "cw1h": 16.0, "source": "Anthropic list (fast mode)"},
+    "claude-opus-5-fast":   {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list (fast mode)"},
+    "claude-opus-4-8-fast": {"input": 10.0, "cached": 1.00, "output": 50.0, "cw5m": 12.50, "cw1h": 20.0, "source": "Anthropic list (fast mode)"},
+    # Opus 4.6 accepts speed="fast" but runs and bills at standard rates.
+    "claude-opus-4-6-fast": {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list (4.6 fast bills standard)"},
+    "claude-opus-4-7":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
+    "claude-opus-4-6":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
+    "claude-opus-4-5":  {"input": 5.0,  "cached": 0.50, "output": 25.0, "cw5m": 6.25,  "cw1h": 10.0, "source": "Anthropic list"},
+    "claude-opus-4-1":  {"input": 15.0, "cached": 1.50, "output": 75.0, "cw5m": 18.75, "cw1h": 30.0, "source": "Anthropic list"},
+    "claude-opus-4":    {"input": 15.0, "cached": 1.50, "output": 75.0, "cw5m": 18.75, "cw1h": 30.0, "source": "Anthropic list"},
+    "claude-sonnet-5-5": {"input": 2.0, "cached": 0.20, "output": 10.0, "cw5m": 2.50,  "cw1h": 4.0,  "source": "Anthropic list"},
+    "claude-sonnet-5":  {"input": 2.0,  "cached": 0.20, "output": 10.0, "cw5m": 2.50,  "cw1h": 4.0,  "source": "Anthropic list"},
+    "claude-sonnet-4-6": {"input": 3.0, "cached": 0.30, "output": 15.0, "cw5m": 3.75,  "cw1h": 6.0,  "source": "Anthropic list"},
+    "claude-sonnet-4-5": {"input": 3.0, "cached": 0.30, "output": 15.0, "cw5m": 3.75,  "cw1h": 6.0,  "source": "Anthropic list"},
+    "claude-sonnet-4":  {"input": 3.0,  "cached": 0.30, "output": 15.0, "cw5m": 3.75,  "cw1h": 6.0,  "source": "Anthropic list"},
+    "claude-haiku-4-5": {"input": 1.0,  "cached": 0.10, "output": 5.0,  "cw5m": 1.25,  "cw1h": 2.0,  "source": "Anthropic list"},
     # OpenAI
     "gpt-5.6-sol":     {"input": 5.0,  "cached": 0.50, "output": 30.0, "source": "OpenAI list"},
     "gpt-5.6-terra":   {"input": 2.5,  "cached": 0.25, "output": 15.0, "source": "OpenAI list"},
@@ -132,13 +161,31 @@ PRICING = {
 
 _UNPRICED = {"input": 0.0, "cached": 0.0, "output": 0.0, "source": "unpriced"}
 
+# What may follow a tier key without changing the price: a provider date
+# stamp (claude-haiku-4-5-20251001, gpt-5.4-2026-03-05) and/or a Codex
+# product variant billed at its base model's rates (gpt-5.2-codex,
+# gpt-5.1-codex-max, gpt-5.3-codex-spark). Anything else is a different
+# model: above all a version component, as in claude-opus-5 + "-5", but
+# also cheaper variants such as -codex-mini and -mini, and "-fast".
+_TIER_SUFFIX = re.compile(
+    r"(?:-\d{8}|-\d{4}-\d{2}-\d{2})?(?:-(?:codex(?:-max|-spark)?|latest))?"
+)
+
 
 def resolve_price(model: str) -> dict:
-    """Longest-prefix match into PRICING; date-versioned ids collapse to tier."""
+    """Most specific PRICING tier whose key is the id up to a tier suffix.
+
+    Unknown ids — including a new version of a known family — return the
+    "unpriced" sentinel rather than a neighbouring tier's rates.
+    """
     m = (model or "").lower()
     best = None
     for tier in PRICING:
-        if m.startswith(tier) and (best is None or len(tier) > len(best)):
+        if (
+            m.startswith(tier)
+            and _TIER_SUFFIX.fullmatch(m[len(tier):])
+            and (best is None or len(tier) > len(best))
+        ):
             best = tier
     if best:
         return PRICING[best]
@@ -394,6 +441,9 @@ def scan_claude_file(path: str):
                 model = msg.get("model") or "(unknown)"
                 if model == "<synthetic>":
                     continue
+                if usage.get("speed") == "fast":
+                    # Billed at the fast-mode rates, its own PRICING tier.
+                    model = f"{model}-fast"
                 mid = msg.get("id")
                 rid = obj.get("requestId")
                 key = f"{mid}:{rid}" if (mid and rid) else (obj.get("uuid") or f"{os.path.basename(path)}:{i}")
@@ -625,14 +675,32 @@ def _claude_origin(path, origin_map):
 # ─────────────────────────────────────────────────────────
 # Aggregation
 # ─────────────────────────────────────────────────────────
-def dedupe_claude_rows(claude_results, origin_for_path):
-    """Global last-wins dedup of scanned Claude rows.
+def _snapshot_rank(day, origin, model, v):
+    """Total order on one request's records: the most complete one wins.
 
-    {key: (day, origin, model, vector)} — the last occurrence of each
-    (message.id, requestId) in deterministic path-then-line order wins.
-    Within a file that is the final stream snapshot of the request (the
-    one the API billed); across files, resume copies are verbatim, so
-    the choice is a no-op there.
+    A request's records are its stream snapshots (the message_start
+    placeholder with output_tokens~1, then the billed final) plus copies
+    in other files — verbatim resume copies, and occasionally truncated
+    ones carrying only part of the usage. The billed final dominates the
+    others componentwise (true for all but 2 of the 1,034,078
+    multi-record requests in the 2026-09-28 scan cache), so the largest
+    token total picks it. (In those two, the largest total may be a
+    placeholder: about $0.10 in all, and ccusage keeps the same record.) The trailing fields only break exact ties,
+    making the pick independent of file and line order; an identical
+    record present in both a human- and an automated-origin file counts
+    as "human" (the larger string).
+    """
+    return (sum(v), v[4], tuple(v), day, model, origin)
+
+
+def dedupe_claude_rows(claude_results, origin_for_path):
+    """Global dedup of scanned Claude rows: one record per request.
+
+    {key: (day, origin, model, vector)} for each (message.id, requestId),
+    keeping the most complete record (_snapshot_rank). Until 2026-09-28
+    the LAST record in path-then-line order won, which picked a truncated
+    resume copy over the billed record whenever the copy's file sorted
+    later (July 2026: -$40 at list prices).
     """
     picked = {}
     for path in sorted(claude_results):
@@ -641,8 +709,19 @@ def dedupe_claude_rows(claude_results, origin_for_path):
             continue
         origin = origin_for_path(path)
         for key, day, model, v in res.get("rows", []):
-            picked[key] = (day, origin, model, v)
+            row = (day, origin, model, v)
+            cur = picked.get(key)
+            if cur is None or _snapshot_rank(*row) > _snapshot_rank(*cur):
+                picked[key] = row
     return picked
+
+
+def aggregate_claude(picked, daily):
+    """Add each deduplicated request's vector to daily[day][origin]['claude']."""
+    for day, origin, model, v in picked.values():
+        b = daily[day][origin]["claude"][model]
+        for i in range(N_FIELDS):
+            b[i] += v[i]
 
 
 def _new_day():
@@ -675,12 +754,10 @@ def extract_daily(workers: int = 8):
         con, "claudecode", _list_files([CLAUDE_ROOT]), scan_claude_file, workers,
         algo=CLAUDE_SCAN_ALGO,
     )
-    for day, origin, model, v in dedupe_claude_rows(
-        claude_results, lambda p: _claude_origin(p, origin_map)
-    ).values():
-        b = daily[day][origin]["claude"][model]
-        for i in range(N_FIELDS):
-            b[i] += v[i]
+    aggregate_claude(
+        dedupe_claude_rows(claude_results, lambda p: _claude_origin(p, origin_map)),
+        daily,
+    )
     con.close()
 
     _merge_seed(daily)
