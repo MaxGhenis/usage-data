@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-19T02:53:04.350506+00:00",
+  "generatedAt": "2026-10-19T03:43:55.286725+00:00",
   "dateRange": {
     "start": "2025-11-30",
     "end": "2026-10-19"
@@ -13898,10 +13898,10 @@
       "date": "2026-10-19",
       "human": {
         "claude": {
-          "tokens": 774590884,
-          "cost": 250.83,
+          "tokens": 904808949,
+          "cost": 286.22,
           "msgs": 0,
-          "prompts": 191
+          "prompts": 216
         },
         "codex": {
           "tokens": 0,
@@ -13918,8 +13918,8 @@
       },
       "automated": {
         "claude": {
-          "tokens": 176095013,
-          "cost": 63.3,
+          "tokens": 183416114,
+          "cost": 70.1,
           "msgs": 0,
           "prompts": 0
         },
@@ -14102,10 +14102,10 @@
     "lifetime": {
       "human": {
         "claude": {
-          "tokens": 450579728934,
-          "cost": 396515.36,
+          "tokens": 450709946999,
+          "cost": 396550.75,
           "msgs": 0,
-          "prompts": 138287
+          "prompts": 138312
         },
         "codex": {
           "tokens": 840773410767,
@@ -14120,16 +14120,16 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 1291353139701,
-          "cost": 900513.24,
+          "tokens": 1291483357766,
+          "cost": 900548.63,
           "msgs": 0,
-          "prompts": 138289
+          "prompts": 138314
         }
       },
       "automated": {
         "claude": {
-          "tokens": 99392955533,
-          "cost": 48393.62,
+          "tokens": 99400276634,
+          "cost": 48400.42,
           "msgs": 0,
           "prompts": 0
         },
@@ -14146,18 +14146,18 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 269673057605,
-          "cost": 158750.41,
+          "tokens": 269680378706,
+          "cost": 158757.21,
           "msgs": 0,
           "prompts": 0
         }
       },
       "all": {
         "claude": {
-          "tokens": 549972684467,
-          "cost": 444908.98,
+          "tokens": 550110223633,
+          "cost": 444951.17,
           "msgs": 0,
-          "prompts": 138287
+          "prompts": 138312
         },
         "codex": {
           "tokens": 1011053512839,
@@ -14172,10 +14172,10 @@
           "prompts": 0
         },
         "total": {
-          "tokens": 1561026197306,
-          "cost": 1059263.65,
+          "tokens": 1561163736472,
+          "cost": 1059305.84,
           "msgs": 0,
-          "prompts": 138289
+          "prompts": 138314
         }
       }
     }
@@ -14237,16 +14237,16 @@
       "model": "claude-opus-5-5",
       "priceSource": "Anthropic list",
       "human": {
-        "tokens": 238965839546,
-        "cost": 104072.15
+        "tokens": 239093865714,
+        "cost": 104107.54
       },
       "automated": {
-        "tokens": 92193303031,
-        "cost": 39653.58
+        "tokens": 92200624132,
+        "cost": 39660.38
       },
       "all": {
-        "tokens": 331159142577,
-        "cost": 143725.72
+        "tokens": 331294489846,
+        "cost": 143767.92
       }
     },
     {
@@ -14628,7 +14628,7 @@
       "model": "claude-haiku-5-5",
       "priceSource": "unpriced",
       "human": {
-        "tokens": 14125666,
+        "tokens": 16317563,
         "cost": 0.0
       },
       "automated": {
@@ -14636,7 +14636,7 @@
         "cost": 0.0
       },
       "all": {
-        "tokens": 17690639,
+        "tokens": 19882536,
         "cost": 0.0
       }
     },
@@ -15005,14 +15005,14 @@
         "tokens": 19608125103
       },
       {
+        "client": "claude",
+        "model": "claude-haiku-5-5",
+        "tokens": 19882536
+      },
+      {
         "client": "codex",
         "model": "gpt-6.1-sol",
         "tokens": 17789800
-      },
-      {
-        "client": "claude",
-        "model": "claude-haiku-5-5",
-        "tokens": 17690639
       },
       {
         "client": "codex",
@@ -15030,7 +15030,7 @@
     "tokscale": {
       "url": "https://tokscale.ai/u/MaxGhenis",
       "rank": {
-        "week": 13,
+        "week": 14,
         "month": 9,
         "allTime": 9
       },
